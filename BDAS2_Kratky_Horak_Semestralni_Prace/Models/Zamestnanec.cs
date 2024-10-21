@@ -12,7 +12,7 @@
         //FK
         public int IdOddeleni { get; set; } //Odkaz na oddělení , ve kterém zaměstnanec pracuje
         public int IdAdresa { get; set; } //odkaz na adresu zamestnance
-        //Navigační vlastnosti
+        //Navigační vlastnosti test
 
         public Oddeleni Oddeleni { get; set; }
         public Adresa Adresa { get; set; }
