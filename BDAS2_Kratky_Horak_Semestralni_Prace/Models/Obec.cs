@@ -6,7 +6,7 @@
         public int IdObec { get; set; }
 
         //Atributy
-        public string Nazev { get; set;}
+        public string Nazev { get; set; }
         public int IdZeme { get; set; } //Každá obec patří jedné zemi
 
         //Navigační vlastnosti
@@ -14,4 +14,5 @@
 
         // Kolekce adres (1:N)
         public ICollection<Adresa> Adresy { get; set; } //Navigační vlastnost pro relaci s adresami
+    }
 }

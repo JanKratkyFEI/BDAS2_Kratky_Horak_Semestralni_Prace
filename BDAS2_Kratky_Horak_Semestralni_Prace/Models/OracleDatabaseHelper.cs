@@ -8,7 +8,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
     public class OracleDatabaseHelper
     {
-        private string connectionString = "our_connection_string_";
+        private readonly string connectionString;
+
+        public OracleDatabaseHelper(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
 
         public List<Predmet> GetPredmety()
         {
@@ -17,7 +22,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (OracleConnection conn = new OracleConnection(connectionString))
             {
                 conn.Open();
-                using (OracleCommand cmd = new OracleCommand("SELECT * FROM PREDMET", conn))
+                using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
                 {
                     using (OracleDataReader reader = cmd.ExecuteReader())
                     {
@@ -27,7 +32,6 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                             {
                                 IdPredmet = reader.GetInt32(0),
                                 Nazev = reader.GetString(1),
-                                // další vlastnosti podle potřeby...
                             });
                         }
                     }
@@ -50,6 +54,36 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
                     cmd.ExecuteNonQuery(); // vykonání dotazu
                 }
+            }
+        }
+
+        public void TestConnection()
+        {
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open(); 
+                    Console.WriteLine("Připojení k databázi bylo úspěšné.");
+
+                    // Jednoduchý dotaz pro zobrazení dat z tabulky PREDMET
+                    using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
+                    {
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            Console.WriteLine("Data z tabulky PREDMET:");
+                            while (reader.Read())
+                            {
+                                // Zobrazení dat - můžeme zobrazit Id a Název předmětu
+                                Console.WriteLine($"ID: {reader["IdPredmet"]}, Název: {reader["Nazev"]}");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Chyba při připojení k databázi " + ex.Message);
             }
         }
     }

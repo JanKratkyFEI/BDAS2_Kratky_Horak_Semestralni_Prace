@@ -9,10 +9,10 @@
         //Atributy
         public string Ulice { get; set; }
         public string Psc { get; set; }
-        public string Cp {  get; set; }
+        public string Cp { get; set; }
 
         //FK
-        public int IdObec { get; set;}
+        public int IdObec { get; set; }
         public int IdMuzeum { get; set; }
 
         //Navigační vlastnosti
@@ -21,4 +21,6 @@
 
         //Relace
         public ICollection<Zamestnanec> Zamestnanci { get; set; } //Adresa může mít přiřazené zaměstnance
+    }
+}
 

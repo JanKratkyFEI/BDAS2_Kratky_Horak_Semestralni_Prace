@@ -8,4 +8,6 @@
         public string Nazev { get; set; }
 
         //Navigační vlastnosti
-        public ICollection<PredmetMaterial> PredmetyMaterialy { get; set;}
+        public ICollection<PredmetMaterial> PredmetyMaterialy { get; set; }
+    }
+}

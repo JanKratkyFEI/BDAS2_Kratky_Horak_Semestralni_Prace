@@ -1,0 +1,17 @@
+﻿@model List<Predmet>
+
+<h2>Seznam Předmětů</h2>
+
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var predmet in Model)
+        {
+            <li>ID: @predmet.IdPredmet, Název: @predmet.Nazev</li>
+        }
+    </ul>
+}
+else
+{
+    <p>Nebyly nalezeny žádné předměty.</p>
+}

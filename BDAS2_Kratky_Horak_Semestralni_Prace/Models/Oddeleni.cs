@@ -9,6 +9,6 @@
         public string Popis {  get; set; }
 
         //Navigační vlastnosti
-        public ICollection<Zamestanec> Zamestnanci { get; set; }
+        public ICollection<Zamestnanec> Zamestnanci { get; set; }
     }
 }
