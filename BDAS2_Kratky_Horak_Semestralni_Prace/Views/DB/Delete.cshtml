@@ -1,0 +1,19 @@
+﻿@model YourNamespace.Models.Predmet
+
+@{
+    ViewData["Title"] = "Smazat předmět";
+}
+
+<h2>Smazat předmět</h2>
+
+<div>
+    <h4>Opravdu chcete smazat předmět "@Model.Nazev"?</h4>
+    <p>@Model.Popis</p>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zpět na seznam</a>
+</form>
+

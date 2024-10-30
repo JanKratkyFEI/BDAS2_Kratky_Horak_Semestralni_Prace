@@ -8,6 +8,9 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSession(); //pøidá session logovací
+            builder.Services.AddHttpContextAccessor(); //pøidání IHttpContextAccessor
+
 
             var app = builder.Build();
 
@@ -23,7 +26,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapControllerRoute(

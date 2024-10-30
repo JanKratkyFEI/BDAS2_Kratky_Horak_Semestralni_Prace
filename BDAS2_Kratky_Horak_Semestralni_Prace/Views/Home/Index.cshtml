@@ -1,8 +1,36 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<h2> vítejte v muzeiní databázi</h2>
+
+<div>
+    <p>Projděte si dostupná data a spravujte sbírky, autory, předměty a další informace.</p>
+</div>
+
+<hr />
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<div class="container">
+    <h3>Dostupné Sekce</h3>
+    <ul>
+        <li><a asp-controller="DB" asp-action="Browse" asp-route-section="Predmety">Předměty</a></li>
+        <li><a asp-controller="DB" asp-action="Browse" asp-route-section="Autori">Autoři</a></li>
+        <li><a asp-controller="DB" asp-action="Browse" asp-route-section="Sbirky">Sbírky</a></li>
+        <!-- další sekce-->
+    </ul>
+</div>
+
+@if (User.Identity.IsAuthenticated)
+{
+   <div class="container mt-4">
+       <h3>Content</h3>
+       <ul>
+            <li><a asp-controller="Account" asp-action="Profile">Správa profilu</a></li>
+            <li><a asp-controller="DB" asp-action="Add">Přidat nový záznam</a></li>
+       </ul>
+   </div>
+}

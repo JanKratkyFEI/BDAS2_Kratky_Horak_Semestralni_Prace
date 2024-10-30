@@ -1,17 +1,17 @@
-﻿@model List<Predmet>
-
-<h2>Seznam Předmětů</h2>
+﻿@model List<Autor>
+<!-- tento file slouží pouze k ověření konektce projektu a oracle db-->
+<h2>Seznam Autorů</h2>
 
 @if (Model != null && Model.Any())
 {
     <ul>
-        @foreach (var predmet in Model)
+        @foreach (var autor in Model)
         {
-            <li>ID: @predmet.IdPredmet, Název: @predmet.Nazev</li>
+            <li>ID: @autor.IdAutor, Jméno: @autor.Jmeno, Příjmení: @autor.Prijmeni</li>
         }
     </ul>
 }
 else
 {
-    <p>Nebyly nalezeny žádné předměty.</p>
+    <p>Nebyli nalezeni žádní autoři.</p>
 }

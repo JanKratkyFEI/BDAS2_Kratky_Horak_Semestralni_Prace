@@ -1,0 +1,62 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models
+<h2> Vytvořit nový předmět</h2>
+
+<form asp-action="Create">
+	<label>Název:</label>
+	<input asp-for="Nazev" />
+	</div>
+	<div>
+		<label>Popis:</label>
+		<input asp-for="Popis" />
+	</div>
+	<div>
+		<label>Typ předmětu:</label>
+		<select asp-for="Typ">
+			<option value="Fotografie">Fotografie</option>
+			<option value="Obraz">Obraz</option>
+			<option value="Socha">Socha</option>
+		</select>
+		</<div>
+
+
+			<!-- Specifické atributy pro fotografie -->
+			@if (ViewData["Typ"]?.ToString() == "Fotografie")
+			{
+				<div>
+					<label>Žánr:</label>
+					<input asp-for="Zanr" />
+				</div>
+				<div>
+					<label>Licence:</label>
+					<input asp-for="Licence" />
+				</div>
+			}
+			<!--Specificke atributy pro Obraz-->
+			@if (ViewData["Typ"]?.ToString() == "Obraz")
+			{
+				<div>
+					<label>Umělecký styl:</label>
+					<input asp-for="UmeleckyStyl" />
+
+				</div>
+				<div>
+					<label>Médium:</label>
+					<input asp-for="Medium" />
+				</div>
+
+			}
+			<!-- Specifické atributy pro Socha -->
+			@if (ViewData["Typ"]?.ToString() == "Socha")
+			{
+				<div>
+					<label>Váha:</label>
+					<input asp-for="Vaha" />
+				</div>
+				<div>
+					<label>Technika tvorby:</label>
+					<input asp-for="TechnikaTvorby" />
+				</div>
+			}
+			<button type="submit">Vytvořit</button>
+
+</form>

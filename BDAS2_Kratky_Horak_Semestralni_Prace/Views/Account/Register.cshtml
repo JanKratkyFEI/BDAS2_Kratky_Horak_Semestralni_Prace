@@ -1,0 +1,30 @@
+﻿@{
+	ViewData["Title"] = "Registrace";
+}
+
+<h2>Registrace</h2>
+
+<form method="post" asp-controller="Account" asp-action="Register">
+
+<div class="form-group">
+<label>Uživatelské Jméno:</label>
+<input type="text" name="username" class="form-control" required />
+</div>
+
+<div class="form-group">
+	<label>Heslo:</label>
+	<input type="password" name="password" class="form-control" required />
+</div>
+
+<button type="submit" class="btn btn-primary mt-3">Registrovat</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+	<div class="text-danger">
+		@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+		{
+			<p>@error.ErrorMessage</p>
+		}
+	</div>
+}

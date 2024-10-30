@@ -15,33 +15,36 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             this.connectionString = connectionString;
         }
 
-        public List<Predmet> GetPredmety()
+        public List<Autor> GetAutori()
         {
-            var predmety = new List<Predmet>();
+            var autori = new List<Autor>();
 
             using (OracleConnection conn = new OracleConnection(connectionString))
             {
                 conn.Open();
-                using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
+                // Dotaz na tabulku AUTOR
+                using (OracleCommand cmd = new OracleCommand("SELECT ID_AUTOR, JMENO, PRIJMENI FROM AUTOR", conn))
                 {
                     using (OracleDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            predmety.Add(new Predmet
+                            autori.Add(new Autor
                             {
-                                IdPredmet = reader.GetInt32(0),
-                                Nazev = reader.GetString(1),
+                                IdAutor = reader.GetInt32(0),
+                                Jmeno = reader.GetString(1),
+                                Prijmeni = reader.GetString(2),
                             });
                         }
                     }
                 }
             }
 
-            return predmety;
+            return autori;
         }
+    
 
-        public void InsertPredmet(Predmet predmet)
+    public void InsertPredmet(Predmet predmet)
         {
             using (OracleConnection conn = new OracleConnection(connectionString))
             {

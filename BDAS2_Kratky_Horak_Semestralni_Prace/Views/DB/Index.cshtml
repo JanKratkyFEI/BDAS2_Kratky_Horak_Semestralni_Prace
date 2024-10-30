@@ -1,0 +1,35 @@
+﻿@model IEnumerable<YourNamespace.Models.Predmet>
+
+@{
+    ViewData["Title"] = "Seznam předmětů";
+}
+
+<h2>Seznam předmětů</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Název</th>
+            <th>Popis</th>
+            <th>Typ</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var predmet in Model)
+        {
+            <tr>
+                <td>@predmet.Nazev</td>
+                <td>@predmet.Popis</td>
+                <td>@predmet.Typ</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@predmet.Id">Detaily</a> |
+                    <a asp-action="Edit" asp-route-id="@predmet.Id">Upravit</a> |
+                    <a asp-action="Delete" asp-route-id="@predmet.Id">Smazat</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Přidat nový předmět</a>
