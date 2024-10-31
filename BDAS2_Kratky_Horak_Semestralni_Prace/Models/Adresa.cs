@@ -8,11 +8,11 @@
 
         //Atributy
         public string Ulice { get; set; }
-        public string Psc { get; set; }
-        public string Cp { get; set; }
-
+        public string PSC { get; set; }
         //FK
         public int IdObec { get; set; }
+        public string CP { get; set; }
+        //FK
         public int IdMuzeum { get; set; }
 
         //Navigační vlastnosti

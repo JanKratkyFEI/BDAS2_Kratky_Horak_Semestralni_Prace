@@ -9,18 +9,18 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
     public class DBController : Controller
     {
-        private readonly OracleDatabaseHelper _dbHelper;
+        private readonly OracleDatabaseHelper _connectionString;
 
         public DBController(IConfiguration configuration)
         {
             // Inicializace OracleDatabaseHelper s connection stringem z konfigurace
             string connectionString = configuration.GetConnectionString("OracleDbConnection");
-            _dbHelper = new OracleDatabaseHelper(connectionString);
+            _connectionString = new OracleDatabaseHelper(connectionString);
         }
 
         public IActionResult TestConnection()
         {
-            List<Autor> autori = _dbHelper.GetAutori();
+            List<Autor> autori = _connectionString.GetAutori();
 
             // Vrátíme data do view nebo je zobrazíme přímo
             return View(autori);
@@ -63,20 +63,46 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
         public IActionResult Index()
         {
-            var predmety = // Nacti zaznamy z db
+            var predmety = _connectionString.GetPredmety();
+            
                 return View(predmety);
         }
-		// Details: Zobrazí detail jednoho záznamu
-		public IActionResult Details(int id)
+        public IActionResult IndexAutor()
+        {
+            var autori = _connectionString.GetAutori();
+            return View(autori);
+        }
+        public IActionResult IndexAdresa()
+        {
+            var adresy = _connectionString.GetAdresy();
+            return View(adresy);
+        }
+
+        public IActionResult DetailsAdresa(int id)
+        {
+            var adresa = _connectionString.GetAdresaById(id);
+            if (adresa == null) return NotFound();
+            return View(adresa);
+        }
+
+
+        // Details: Zobrazí detail jednoho záznamu
+        public IActionResult Details(int id)
 		{
 			var predmet = // Načti záznam podle ID
 
 		if (predmet == null) return NotFound();
 			return View(predmet);
 		}
+        public IActionResult DetailsAutor(int id)
+        {
+            var autor = _connectionString.GetAutorById(id);
+            if (autor == null) return NotFound();
+            return View(autor);
+        }
 
-		// Edit: Zobrazení formuláře pro úpravu záznamu
-		public IActionResult Edit(int id)
+        // Edit: Zobrazení formuláře pro úpravu záznamu
+        public IActionResult Edit(int id)
 		{
 			var predmet = // Načti záznam podle ID
 

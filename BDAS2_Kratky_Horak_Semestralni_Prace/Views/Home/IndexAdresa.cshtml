@@ -1,0 +1,34 @@
+﻿namespace BDAS2_Kratky_Horak_Semestralni_Prace.Views.Home
+{
+   @model IEnumerable<YourNamespace.Models.Adresa>
+
+@{
+    ViewData["Title"] = "Seznam adres";
+}
+
+<h2>Seznam adres</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ulice</th>
+            <th>PSČ</th>
+            <th>Číslo popisné</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var adresa in Model)
+        {
+            <tr>
+                <td>@adresa.Ulice</td>
+                <td>@adresa.PSC</td>
+                <td>@adresa.CP</td>
+                <td>
+                    <a asp-action="DetailsAdresa" asp-route-id="@adresa.IdAdresa">Detaily</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,28 @@
+﻿namespace BDAS2_Kratky_Horak_Semestralni_Prace.Views.DB
+{
+ @model YourNamespace.Models.Autor
+
+@{
+    ViewData["Title"] = "Detaily autora";
+}
+
+<h2>Detaily autora</h2>
+
+<div>
+    <h4>@Model.Jmeno @Model.Prijmeni</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.IdAutor</dd>
+
+        <dt class="col-sm-2">Jméno</dt>
+        <dd class="col-sm-10">@Model.Jmeno</dd>
+
+        <dt class="col-sm-2">Příjmení</dt>
+        <dd class="col-sm-10">@Model.Prijmeni</dd>
+    </dl>
+</div>
+
+<a asp-action="IndexAutor" class="btn btn-secondary">Zpět na seznam</a>
+
+}

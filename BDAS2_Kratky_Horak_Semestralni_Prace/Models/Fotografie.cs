@@ -3,7 +3,7 @@
     public class Fotografie : Predmet
     {
         public string Zanr { get; set; } 
-        public string Rozliseni { get; set; } 
+        public string License { get; set; } 
     }
     
     

@@ -1,0 +1,31 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Views.Home>
+
+@{
+    ViewData["Title"] = "Seznam autorů";
+}
+
+<h2>Seznam autorů</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Jméno</th>
+            <th>Příjmení</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var autor in Model)
+        {
+            <tr>
+                <td>@autor.Jmeno</td>
+                <td>@autor.Prijmeni</td>
+                <td>
+                    <a asp-action="DetailsAutor" asp-route-id="@autor.IdAutor">Detaily</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+}
