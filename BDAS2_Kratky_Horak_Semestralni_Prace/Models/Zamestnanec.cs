@@ -9,7 +9,7 @@
         public string Jmeno {  get; set; }
         public string Prijmeni { get; set; }
         public string Email { get; set; }
-        public string Tel { get; set; }
+        public string Telefon { get; set; }
         public string RodCislo { get; set; }
         public DateTime DatumZamestnani { get; set; }
         public string TypSmlouva { get; set; }
@@ -24,7 +24,10 @@
 
         public Oddeleni Oddeleni { get; set; }
         public Adresa Adresa { get; set; }
-
         public Zamestnanec RedZamestnanec { get; set; }
+
+        //loginy
+        public string Username { get; set; }
+        public string Password { get; set; } //uložený hash hesla
     }
 }

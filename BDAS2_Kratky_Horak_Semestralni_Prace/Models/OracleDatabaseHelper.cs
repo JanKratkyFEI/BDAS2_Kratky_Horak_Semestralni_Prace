@@ -40,12 +40,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                             }
                         }
                     }
-                } 
+                }
             }
             return autori;
         }
 
-            public List<Predmet> GetPredmety(string typ = null)
+        public List<Predmet> GetPredmety(string typ = null)
         {
             var predmety = new List<Predmet>();
 
@@ -133,9 +133,10 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 connection.Open();
                 var query = @"
             SELECT 
-                IdZamestnanec, Pozice, Jmeno, Prijmeni, Email, Telefon, 
-                RodneCislo, DatumZamestnani, TypSmlouva, Plat, Pohlavi, 
-                IdAdresa, IdOddeleni, IdRecZamestnanec
+        IdZamestnanec, Pozice, Jmeno, Prijmeni, Email, Telefon, 
+        RodneCislo, DatumZamestnani, TypSmlouva, Plat, Pohlavi, 
+        IdAdresa, IdOddeleni, IdRecZamestnanec, Username, Password
+        FROM Zamestnanec
             FROM Zamestnanec";
 
                 using (var command = new OracleCommand(query, connection))
@@ -151,7 +152,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                                 Jmeno = reader.GetString(reader.GetOrdinal("Jmeno")),
                                 Prijmeni = reader.GetString(reader.GetOrdinal("Prijmeni")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Tel = reader.GetString(reader.GetOrdinal("Telefon")),
+                                Telefon = reader.GetString(reader.GetOrdinal("Telefon")),
                                 RodCislo = reader.GetString(reader.GetOrdinal("RodneCislo")),
                                 DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DatumZamestnani")),
                                 TypSmlouva = reader.GetString(reader.GetOrdinal("TypSmlouva")),
@@ -159,7 +160,10 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                                 Pohlavi = reader.GetInt32(reader.GetOrdinal("Pohlavi")),
                                 IdAdresa = reader.GetInt32(reader.GetOrdinal("IdAdresa")),
                                 IdOddeleni = reader.GetInt32(reader.GetOrdinal("IdOddeleni")),
-                                IdRecZamestnanec = reader.GetInt32(reader.GetOrdinal("IdRecZamestnanec"))
+                                IdRecZamestnanec = reader.GetInt32(reader.GetOrdinal("IdRecZamestnanec")),
+                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                Password = reader.GetString(reader.GetOrdinal("Password"))
+                            
                             });
                         }
                     }
@@ -167,6 +171,54 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
 
             return zamestnanci;
+        }
+
+        public Zamestnanec GetZamestnanecByUsername(string username)
+        {
+            Zamestnanec zamestnanec = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT
+            IdZamestnanec, Pozice, Jmeno, Prijmeni, Email, Telefon, 
+            RodneCislo, DatumZamestnani, TypSmlouva, Plat, Pohlavi, 
+            IdAdresa, IdOddeleni, IdRecZamestnanec, Username, Password
+            FROM Zamestnanec
+            WHERE Username = :username";
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("username", username));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            zamestnanec = new Zamestnanec
+                            {
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("IdZamestnanec")),
+                                Pozice = reader.GetString(reader.GetOrdinal("Pozice")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("Jmeno")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("Prijmeni")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Telefon = reader.GetString(reader.GetOrdinal("Telefon")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RodneCislo")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DatumZamestnani")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TypSmlouva")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("Plat")),
+                                Pohlavi = reader.GetInt32(reader.GetOrdinal("Pohlavi")),
+                                IdAdresa = reader.GetInt32(reader.GetOrdinal("IdAdresa")),
+                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("IdOddeleni")),
+                                IdRecZamestnanec = reader.GetInt32(reader.GetOrdinal("IdRecZamestnanec")),
+                                Username = reader.GetString(reader.GetOrdinal("Username")),
+                                Password = reader.GetString(reader.GetOrdinal("Password"))
+                            };
+                        }
+                    }
+                }
+            }
+            return zamestnanec;
         }
 
         public List<Adresa> GetAdresy()
@@ -205,20 +257,20 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
 
         public void InsertPredmet(Predmet predmet)
+        {
+            using (OracleConnection conn = new OracleConnection(_connectionString))
+            {
+                conn.Open();
+                using (OracleCommand cmd = new OracleCommand("INSERT INTO Predmet (Nazev, Stari,Popis) VALUES (:nazev, :stari, :popis)", conn))
                 {
-                    using (OracleConnection conn = new OracleConnection(_connectionString))
-                    {
-                        conn.Open();
-                        using (OracleCommand cmd = new OracleCommand("INSERT INTO Predmet (Nazev, Stari,Popis) VALUES (:nazev, :stari, :popis)", conn))
-                        {
-                            cmd.Parameters.Add(new OracleParameter("nazev", predmet.Nazev));
-                            cmd.Parameters.Add(new OracleParameter("stari", predmet.Stari));
-                            cmd.Parameters.Add(new OracleParameter("popis", predmet.Popis));
+                    cmd.Parameters.Add(new OracleParameter("nazev", predmet.Nazev));
+                    cmd.Parameters.Add(new OracleParameter("stari", predmet.Stari));
+                    cmd.Parameters.Add(new OracleParameter("popis", predmet.Popis));
 
-                            cmd.ExecuteNonQuery(); // vykonání dotazu
-                        }
-                    }
+                    cmd.ExecuteNonQuery(); // vykonání dotazu
                 }
+            }
+        }
 
         public Autor GetAutorById(int id)
         {
@@ -285,33 +337,33 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
 
         public void TestConnection()
+        {
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(_connectionString))
                 {
-                    try
-                    {
-                        using (OracleConnection conn = new OracleConnection(_connectionString))
-                        {
-                            conn.Open();
-                            Console.WriteLine("Připojení k databázi bylo úspěšné.");
+                    conn.Open();
+                    Console.WriteLine("Připojení k databázi bylo úspěšné.");
 
-                            // Jednoduchý dotaz pro zobrazení dat z tabulky PREDMET
-                            using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
+                    // Jednoduchý dotaz pro zobrazení dat z tabulky PREDMET
+                    using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
+                    {
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            Console.WriteLine("Data z tabulky PREDMET:");
+                            while (reader.Read())
                             {
-                                using (OracleDataReader reader = cmd.ExecuteReader())
-                                {
-                                    Console.WriteLine("Data z tabulky PREDMET:");
-                                    while (reader.Read())
-                                    {
-                                        // Zobrazení dat - můžeme zobrazit Id a Název předmětu
-                                        Console.WriteLine($"ID: {reader["IdPredmet"]}, Název: {reader["Nazev"]}");
-                                    }
-                                }
+                                // Zobrazení dat - můžeme zobrazit Id a Název předmětu
+                                Console.WriteLine($"ID: {reader["IdPredmet"]}, Název: {reader["Nazev"]}");
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Chyba při připojení k databázi " + ex.Message);
-                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Chyba při připojení k databázi " + ex.Message);
+            }
         }
+    }
+}
