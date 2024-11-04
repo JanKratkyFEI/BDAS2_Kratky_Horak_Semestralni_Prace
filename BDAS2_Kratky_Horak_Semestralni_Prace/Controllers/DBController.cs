@@ -115,10 +115,10 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View(autor);
         }
 
-        // Edit: Zobrazení formuláře pro úpravu záznamu
+        // Edit: Zobrazení formuláře pro úpravu záznamu REMEMBER: MRKNOUT NA PARTIAL VIEWS
         public IActionResult Edit(int id)
 		{
-			var predmet = // Načti záznam podle ID
+            var predmet = _connectionString.GetPredmetTypeById(id);// Načti záznam podle ID
 
 		if (predmet == null) return NotFound();
 			return View(predmet);
@@ -137,13 +137,13 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 		}
 
 		// Delete: Zobrazení potvrzovací stránky pro smazání
-		public IActionResult Delete(int id)
-		{
-            var predmet = ; // Načti záznam podle ID TODO
+		//public IActionResult Delete(int id)
+		//{
+  //          var predmet = _connectionString.De; // Načti záznam podle ID TODO
 
-		if (predmet == null) return NotFound();
-			return View(predmet);
-		}
+		//if (predmet == null) return NotFound();
+		//	return View(predmet);
+		//}
 
 		// Delete (POST): Smazání záznamu
 		[HttpPost, ActionName("Delete")]

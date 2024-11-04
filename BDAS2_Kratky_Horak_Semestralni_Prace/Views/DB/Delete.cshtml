@@ -1,4 +1,4 @@
-﻿@model YourNamespace.Models.Predmet
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Predmet
 
 @{
     ViewData["Title"] = "Smazat předmět";
@@ -12,7 +12,7 @@
 </div>
 
 <form asp-action="Delete">
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="IdPredmet" />
     <button type="submit" class="btn btn-danger">Smazat</button>
     <a asp-action="Index" class="btn btn-secondary">Zpět na seznam</a>
 </form>

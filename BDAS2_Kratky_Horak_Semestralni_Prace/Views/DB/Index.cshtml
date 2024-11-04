@@ -1,4 +1,4 @@
-﻿@model IEnumerable<YourNamespace.Models.Predmet>
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Predmet>
 
 @{
     ViewData["Title"] = "Seznam předmětů";
@@ -30,9 +30,9 @@
                 <td>@predmet.Popis</td>
                 <td>@predmet.Typ</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@predmet.Id">Detaily</a> |
-                    <a asp-action="Edit" asp-route-id="@predmet.Id">Upravit</a> |
-                    <a asp-action="Delete" asp-route-id="@predmet.Id">Smazat</a>
+                    <a asp-action="Details" asp-route-id="@predmet.IdPredmet">Detaily</a> |
+                    <a asp-action="Edit" asp-route-id="@predmet.IdPredmet">Upravit</a> |
+                    <a asp-action="Delete" asp-route-id="@predmet.IdPredmet">Smazat</a>
                 </td>
             </tr>
         }

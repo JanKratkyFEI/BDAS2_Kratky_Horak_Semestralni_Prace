@@ -1,62 +1,70 @@
-﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Obraz
+
+
 <h2> Vytvořit nový předmět</h2>
 
 <form asp-action="Create">
-	<label>Název:</label>
-	<input asp-for="Nazev" />
-	</div>
-	<div>
-		<label>Popis:</label>
-		<input asp-for="Popis" />
-	</div>
-	<div>
-		<label>Typ předmětu:</label>
-		<select asp-for="Typ">
-			<option value="Fotografie">Fotografie</option>
-			<option value="Obraz">Obraz</option>
-			<option value="Socha">Socha</option>
-		</select>
-		</<div>
+    <div>
+        <label>Název:</label>
+        <input asp-for="Nazev" />
+    </div>
+    <div>
+        <label>Popis:</label>
+        <input asp-for="Popis" />
+    </div>
+    <div>
+        <label>Typ předmětu:</label>
+        <select asp-for="Typ" id="typPredmetu" onchange="toggleFields()">
+            <option value="">Vyberte typ...</option>
+            <option value="Fotografie">Fotografie</option>
+            <option value="Obraz">Obraz</option>
+            <option value="Socha">Socha</option>
+        </select>
+    </div>
+@* 
+    <!-- Specifické atributy pro Fotografie -->
+    <div id="fotografieFields" style="display: none;">
+        <label>Žánr:</label>
+        <input asp-for="Zanr" />
+        <label>Licence:</label>
+        <input asp-for="Licence" />
+    </div> *@
 
+    <!-- Specifické atributy pro Obraz -->
+    <div id="obrazFields" style="display: none;">
+        <label>Umělecký styl:</label>
+        <input asp-for="UmeleckyStyl" />
+        <label>Médium:</label>
+        <input asp-for="Medium" />
+    </div>
 
-			<!-- Specifické atributy pro fotografie -->
-			@if (ViewData["Typ"]?.ToString() == "Fotografie")
-			{
-				<div>
-					<label>Žánr:</label>
-					<input asp-for="Zanr" />
-				</div>
-				<div>
-					<label>Licence:</label>
-					<input asp-for="Licence" />
-				</div>
-			}
-			<!--Specificke atributy pro Obraz-->
-			@if (ViewData["Typ"]?.ToString() == "Obraz")
-			{
-				<div>
-					<label>Umělecký styl:</label>
-					<input asp-for="UmeleckyStyl" />
+    <!-- Specifické atributy pro Socha -->
+   @*  <div id="sochaFields" style="display: none;">
+        <label>Váha:</label>
+        <input asp-for="Vaha" /> 
+        <label>Technika tvorby:</label>
+        <input asp-for="TechnikaTvorby" />
+    </div> *@
 
-				</div>
-				<div>
-					<label>Médium:</label>
-					<input asp-for="Medium" />
-				</div>
-
-			}
-			<!-- Specifické atributy pro Socha -->
-			@if (ViewData["Typ"]?.ToString() == "Socha")
-			{
-				<div>
-					<label>Váha:</label>
-					<input asp-for="Vaha" />
-				</div>
-				<div>
-					<label>Technika tvorby:</label>
-					<input asp-for="TechnikaTvorby" />
-				</div>
-			}
-			<button type="submit">Vytvořit</button>
-
+    <button type="submit">Vytvořit</button>
 </form>
+
+<script>
+    function toggleFields() {
+        var typ = document.getElementById("typPredmetu").value;
+
+        // Skrýt všechny specifické sekce
+        document.getElementById("fotografieFields").style.display = "none";
+        document.getElementById("obrazFields").style.display = "none";
+        document.getElementById("sochaFields").style.display = "none";
+
+        // Zobrazit pouze sekci podle vybraného typu
+        if (typ === "Fotografie") {
+            document.getElementById("fotografieFields").style.display = "block";
+        } else if (typ === "Obraz") {
+            document.getElementById("obrazFields").style.display = "block";
+        } else if (typ === "Socha") {
+            document.getElementById("sochaFields").style.display = "block";
+        }
+    }
+</script>
