@@ -89,10 +89,24 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         // Details: Zobrazí detail jednoho záznamu
         public IActionResult Details(int id)
 		{
-			var predmet = // Načti záznam podle ID
+            var typ = _connectionString.GetPredmetTypeById(id); // Načti záznam podle ID
 
-		if (predmet == null) return NotFound();
-			return View(predmet);
+		if (typ == null) return NotFound();
+			//return View(predmet);
+            switch(typ)
+            {
+                case "Obraz":
+                    var obraz = _connectionString.GetObrazById(id);
+                    return View("DetailsObraz", obraz);
+                case "Fotografie":
+                    var fotografie = _connectionString.GetFotografieById(id);
+                    return View("DetailsFotografie", fotografie);
+                case "Socha":
+                    var socha = _connectionString.GetSochaById(id);
+                    return View("DetailsSocha", socha);
+                default:
+                    return NotFound();
+            }
 		}
         public IActionResult DetailsAutor(int id)
         {
@@ -125,7 +139,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 		// Delete: Zobrazení potvrzovací stránky pro smazání
 		public IActionResult Delete(int id)
 		{
-			var predmet = // Načti záznam podle ID
+            var predmet = ; // Načti záznam podle ID TODO
 
 		if (predmet == null) return NotFound();
 			return View(predmet);

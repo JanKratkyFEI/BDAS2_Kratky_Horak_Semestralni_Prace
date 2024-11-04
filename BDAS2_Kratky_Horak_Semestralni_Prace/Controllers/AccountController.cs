@@ -46,7 +46,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 Prijmeni = "Defualt Prijmeni",
             };
             //Uložení nového usera do db
-            _connectionString.AddZames(newZamestnanec);
+            _connectionString.AddZamestnanec(newZamestnanec);
 
             //Redirect na stránku přihlášení po úspešné registraci.
             return RedirectToAction("Login");
