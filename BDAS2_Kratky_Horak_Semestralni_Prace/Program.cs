@@ -1,3 +1,5 @@
+using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
+
 namespace BDAS2_Kratky_Horak_Semestralni_Prace
 {
     public class Program
@@ -11,6 +13,14 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace
             builder.Services.AddSession(); //pøidá session logovací
             builder.Services.AddHttpContextAccessor(); //pøidání IHttpContextAccessor
 
+
+            //Registrace OracleDatabaseHelper jako singleton
+            builder.Services.AddSingleton<OracleDatabaseHelper>(provider =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString("OracleDbConnection");
+                return new OracleDatabaseHelper(connectionString);
+            });
 
             var app = builder.Build();
 

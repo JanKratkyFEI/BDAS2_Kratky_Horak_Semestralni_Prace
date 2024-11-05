@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Reflection;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
@@ -33,32 +34,62 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View();
         }
 
-        public IActionResult Create(string typ)
+        public IActionResult CreatePredmet(string typ)
         {
             ViewData["Typ"] = typ;
-            return View();
+            return View(new PredmetViewModel { Typ = typ });
         }
 
         [HttpPost]
-        public IActionResult Create(Predmet predmet)
+        public IActionResult CreatePredmet(PredmetViewModel model)
         {
             if (ModelState.IsValid)
             {
-                if (predmet.Typ == "Fotografie")
+                // Rozhodněte se podle typu předmětu (Fotografie, Obraz, Socha)
+                switch (model.Typ)
                 {
+                    case "Fotografie":
+                        var fotografie = new Fotografie
+                        {
+                            Nazev = model.Nazev,
+                            Popis = model.Popis,
+                            Zanr = model.Zanr,
+                            Licence = model.Licence
+                        };
+                        _connectionString.AddFotografie(fotografie);
+                        break;
 
-                }
-                else if (predmet.Typ == "Obraz")
-                {
+                    case "Obraz":
+                        var obraz = new Obraz
+                        {
+                            Nazev = model.Nazev,
+                            Popis = model.Popis,
+                            UmeleckyStyl = model.UmeleckyStyl,
+                            Medium = model.Medium
+                        };
+                        _connectionString.AddObraz(obraz);
+                        break;
 
-                }
-                else if (predmet.Typ == "Socha")
-                {
+                    case "Socha":
+                        var socha = new Socha
+                        {
+                            Nazev = model.Nazev,
+                            Popis = model.Popis,
+                            Vaha = model.Vaha,
+                            TechnikaTvorby = model.TechnikaTvorby
+                        };
+                        _connectionString.AddSocha(socha);
+                        break;
 
+                    default:
+                        ModelState.AddModelError("", "Neplatný typ předmětu.");
+                        return View(model);
                 }
+
                 return RedirectToAction("Index");
             }
-            return View(predmet);
+
+            return View(model);
         }
 
         public IActionResult Index()

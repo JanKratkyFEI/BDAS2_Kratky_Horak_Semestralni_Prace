@@ -1,4 +1,4 @@
-﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Obraz
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.PredmetViewModel
 
 
 <h2> Vytvořit nový předmět</h2>
@@ -21,14 +21,14 @@
             <option value="Socha">Socha</option>
         </select>
     </div>
-@* 
+
     <!-- Specifické atributy pro Fotografie -->
     <div id="fotografieFields" style="display: none;">
         <label>Žánr:</label>
         <input asp-for="Zanr" />
         <label>Licence:</label>
         <input asp-for="Licence" />
-    </div> *@
+    </div> 
 
     <!-- Specifické atributy pro Obraz -->
     <div id="obrazFields" style="display: none;">
@@ -39,12 +39,12 @@
     </div>
 
     <!-- Specifické atributy pro Socha -->
-   @*  <div id="sochaFields" style="display: none;">
+     <div id="sochaFields" style="display: none;">
         <label>Váha:</label>
         <input asp-for="Vaha" /> 
         <label>Technika tvorby:</label>
         <input asp-for="TechnikaTvorby" />
-    </div> *@
+    </div>
 
     <button type="submit">Vytvořit</button>
 </form>

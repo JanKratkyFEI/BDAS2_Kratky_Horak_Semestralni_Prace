@@ -1,4 +1,34 @@
-﻿@{
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.LoginViewModel
+<h2>Přihlášení</h2>
+
+<form asp-action="Login" method="post">
+    <div>
+        <label>Uživatelské jméno:</label>
+        <input asp-for="Username" />
+    </div>
+    <div>
+        <label>Heslo:</label>
+        <input asp-for="Password" type="password" />
+    </div>
+    <button type="submit">Přihlásit se</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div>
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p style="color: red">@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<!-- Odkazy na registraci a aktivaci účtu -->
+<div style="margin-top: 20px;">
+    <p>Nemáte účet? <a asp-action="Register" asp-controller="Account">Zaregistrujte se</a>.</p>
+    <p>Jste zaměstnanec, ale nemáte přihlašovací údaje? <a asp-action="Activate" asp-controller="Account">Aktivujte svůj účet</a>.</p>
+</div>
+@* @{
     ViewData["Title"] = "Přihlášení";
 }
 
@@ -18,4 +48,4 @@
 @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
 {
     <p style="color:red;">@ViewBag.ErrorMessage</p>
-}
+} *@
