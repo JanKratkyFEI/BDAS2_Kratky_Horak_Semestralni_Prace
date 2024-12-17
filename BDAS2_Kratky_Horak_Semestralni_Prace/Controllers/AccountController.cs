@@ -163,14 +163,18 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         public IActionResult Profile()
         {
             var username = HttpContext.Session.GetString("Username");
-            var user = _connectionString.GetZamestnanecByUsername(username);
-
-            if (user == null)
+            if (string.IsNullOrEmpty(username))
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account");
             }
 
-            return View(user);
+            var zamestnanec = _connectionString.GetZamestnanecJoinDetails(username);
+            if (zamestnanec == null)
+            {
+                return NotFound("Zaměstnanec nebyl nalezen.");
+            }
+
+            return View(zamestnanec);
         }
 
         [HttpGet]

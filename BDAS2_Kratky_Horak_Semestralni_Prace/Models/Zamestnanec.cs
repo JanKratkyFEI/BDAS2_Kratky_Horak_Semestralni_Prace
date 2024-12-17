@@ -31,5 +31,12 @@
         public string Password { get; set; } //uložený hash hesla
 
         public string Role {  get; set; }
+
+        //pic
+        public string ProfilePictureUrl { get; set; }
+
+        //idtostring
+        public string AdresaText { get; set; }
+        public string OddeleniText { get; set; }
     }
 }

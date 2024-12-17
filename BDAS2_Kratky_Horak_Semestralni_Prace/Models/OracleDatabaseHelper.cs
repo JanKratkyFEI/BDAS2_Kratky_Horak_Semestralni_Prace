@@ -557,6 +557,70 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             return zamestnanec;
         }
 
+        public Zamestnanec GetZamestnanecJoinDetails(string username)
+        {
+            Zamestnanec zamestnanec = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT 
+            z.ID_ZAMESTNANEC, 
+            z.JMENO, 
+            z.PRIJMENI, 
+            z.EMAIL, 
+            z.TELEFON,
+            z.POZICE,
+            z.DATUM_ZAMESTNANI,
+            a.ULICE || ', ' || a.PSC AS NAZEV_ADRESY,
+            o.NAZEV AS NAZEV_ODDELENI
+        FROM 
+            ZAMESTNANEC z
+        LEFT JOIN ADRESA a ON z.ID_ADRESA = a.ID_ADRESA
+        LEFT JOIN ODDELENI o ON z.ID_ODDELENI = o.ID_ODDELENI
+        WHERE 
+            z.USERNAME = :Username";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("Username", username));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // Uložení dat do paměti
+                            var idZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC"));
+                            var jmeno = reader.GetString(reader.GetOrdinal("JMENO"));
+                            var prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI"));
+                            var email = reader.GetString(reader.GetOrdinal("EMAIL"));
+                            var telefon = reader.GetString(reader.GetOrdinal("TELEFON"));
+                            var pozice = reader.GetString(reader.GetOrdinal("POZICE"));
+                            var datumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI"));
+                            var adresaText = reader.IsDBNull(reader.GetOrdinal("NAZEV_ADRESY")) ? "Neznámá adresa" : reader.GetString(reader.GetOrdinal("NAZEV_ADRESY"));
+                            var oddeleniText = reader.IsDBNull(reader.GetOrdinal("NAZEV_ODDELENI")) ? "Neznámé oddělení" : reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI"));
+
+                            // Naplnění objektu
+                            zamestnanec = new Zamestnanec
+                            {
+                                IdZamestnanec = idZamestnanec,
+                                Jmeno = jmeno,
+                                Prijmeni = prijmeni,
+                                Email = email,
+                                Telefon = telefon,
+                                Pozice = pozice,
+                                DatumZamestnani = datumZamestnani,
+                                AdresaText = adresaText,
+                                OddeleniText = oddeleniText
+                            };
+                        }
+                    }
+                }
+            }
+            return zamestnanec;
+        }
+
         
 
 
