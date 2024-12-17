@@ -1,7 +1,9 @@
 ﻿using BDAS2_Kratky_Horak_Semestralni_Prace.Helpers;
 using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
@@ -14,44 +16,11 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             _connectionString = connectionString;
         }
         [HttpGet]
-        public IActionResult Activate()
+        public IActionResult RegisterExistingEmployee()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Activate(string jmeno, string prijmeni, string username, string password)
-        {
-            if (string.IsNullOrWhiteSpace(jmeno) || string.IsNullOrWhiteSpace(prijmeni) ||
-                string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                ModelState.AddModelError("", "Všechna pole jsou povinná.");
-                return View();
-            }
-
-            //Najde zamestnance dle jmena
-            var existingZamestnanec = _connectionString.GetZamestnanecByName(jmeno, prijmeni);
-
-            if (existingZamestnanec == null)
-            {
-                ModelState.AddModelError("", "Zaměstnanec nebyl nalezen.");
-                return View();
-            }
-
-            if(!string.IsNullOrEmpty(existingZamestnanec.Username) || !string.IsNullOrEmpty(existingZamestnanec.Password))
-            {
-                ModelState.AddModelError("", "Účet je již aktivován.");
-                return View();
-            }
-
-            //zašifrovat heslo a aktualizovat udaje
-            existingZamestnanec.Username = username;
-            existingZamestnanec.Password = PasswordHelper.HashPassword(password);
-
-            //uložit změny do db
-            _connectionString.UpdateZamestnanec(existingZamestnanec);
-            return RedirectToAction("Login");
-        }
 
         [HttpGet]
         public IActionResult Register()
@@ -59,45 +28,70 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Register(string username, string password, string jmeno, string prijmeni)
+        public IActionResult Register (RegisterViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Uživatelské jmeno a heslo jsou povinné.");
-                return View();
+                return View(model);
+            }
+			if (model.IsExistingEmployee)
+			{
+				return RedirectToAction("RegisterExistingEmployee", model);
+			}
+			else
+			{
+				return RedirectToAction("RegisterNewEmployee", model);
+			}
+
+		}
+
+        [HttpPost]
+        public IActionResult RegisterNewEmployee(RegisterViewModel model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View("Register",model);
             }
 
-            //Kontrola zda uživatel s tímto jménem již existuje
-
-
-            var existingUser = _connectionString.GetZamestnanecByUsername(username);
-            if (existingUser != null)
+            var novyZamestnanec = new Zamestnanec
             {
-                ModelState.AddModelError("", "Uživatel s tímto jménem již existuje.");
-                return View();
-
-               
-            }
-            //šifrování
-            string hashedPassword = PasswordHelper.HashPassword(password);
-
-            //vytvoření nového zaměstnance s rolí "User"
-            var newZamestnanec = new Zamestnanec
-            {
-                Username = username,
-                Password = hashedPassword,
-                Jmeno = jmeno,
-                Prijmeni = prijmeni,
+                Jmeno = model.Jmeno,
+                Prijmeni = model.Prijmeni,
+                Username = model.Username,
+                Password = PasswordHelper.HashPassword(model.Password), // Heslo bude hashované
+                Email = model.Email,
+                Role = "registered", // Výchozí role
+                Plat = 20000, // Výchozí plat (nastavit podle aktuální minimální mzdy)
+                DatumZamestnani = DateTime.Now, // Datum registrace jako datum zaměstnání
+                Pozice = "Nový kolega", // Výchozí hodnota pro pozici
+                Telefon = "N/A", // Defaultní hodnota, pokud nemáme ve formuláři
+                RodCislo = "N/A", // Defaultní hodnota, pokud není uvedeno
+                TypSmlouva = "Plný úvazek", // Výchozí hodnota
+                IdAdresa = 1, // Výchozí hodnota
+                IdOddeleni = 1 // Výchozí hodnota
             };
-            //Uložení nového usera do db
-            _connectionString.AddZamestnanec(newZamestnanec);
+            try
+            {
+                _connectionString.InsertZamestnanec(novyZamestnanec);
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Chyba při registraci: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Stack Trace: " + ex.StackTrace);
 
-            //Redirect na stránku přihlášení po úspešné registraci.
-            return RedirectToAction("Login");
+                ModelState.AddModelError("", "Registrace se nezdařila. Zkuste to prosím znovu.");
+                return View("Register", model);
+            }
 
-
+            
         }
+
+      
+        
+
+
         //Simulované metody pro kontrolu a vytvoření uživatele, pak nahradíme triggerem
         private bool CheckUserExists(string username)
         {
@@ -136,6 +130,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 ModelState.AddModelError("", "Neplatné přihlašovací údaje.");
                 return View();
             }
+
+            if (string.IsNullOrEmpty(user.Password))
+            {
+                ModelState.AddModelError("", "Neplatné přihlašovací údaje.");
+                return View();
+            }
             // Ověření hesla - porovnání hash hesla
             if (!PasswordHelper.VerifyPassword(password, user.Password))
             {
@@ -158,6 +158,29 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             //vyčistí session při odhlášení
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Profile()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _connectionString.GetZamestnanecByUsername(username);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View(user);
+        }
+
+        [HttpGet]
+        public IActionResult SearchEmployees(string searchQuery)
+        {
+            var employees = _connectionString.GetZamestnanci()
+                .Where(e => e.Jmeno.Contains(searchQuery) || e.Prijmeni.Contains(searchQuery))
+                .ToList();
+
+            return View(employees);
         }
 
         }

@@ -1,36 +1,69 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<h2> vítejte v muzeiní databázi</h2>
+<div class="container mt-4">
+    <!-- Nadpis a úvodní popis -->
+    <div class="text-center mb-4">
+        <h1 class="display-4">Vítejte v Muzejní Databázi</h1>
+        <p class="lead">Projděte si dostupná data, spravujte sbírky, autory, předměty a další informace.</p>
+        <hr />
+    </div>
 
-<div>
-    <p>Projděte si dostupná data a spravujte sbírky, autory, předměty a další informace.</p>
+    <!-- Sekce dostupných dat -->
+    <div class="row">
+        <h3 class="mb-3">Dostupné Sekce</h3>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Předměty</h5>
+                    <p class="card-text">Prohlédněte si záznamy předmětů v muzeu.</p>
+                    <a asp-controller="DB" asp-action="Browse" asp-route-section="Predmety" class="btn btn-primary">Prohlédnout</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Autoři</h5>
+                    <p class="card-text">Prohlédněte si seznam autorů děl.</p>
+                    <a asp-controller="DB" asp-action="Browse" asp-route-section="Autori" class="btn btn-primary">Prohlédnout</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Sbírky</h5>
+                    <p class="card-text">Prohlédněte si dostupné sbírky.</p>
+                    <a asp-controller="DB" asp-action="Browse" asp-route-section="Sbirky" class="btn btn-primary">Prohlédnout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Obsah pro přihlášené uživatele -->
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="row mt-5">
+            <h3 class="mb-3">Správa a Obsah</h3>
+            <div class="col-md-6 mb-3">
+                <div class="card bg-info text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Správa profilu</h5>
+                        <p class="card-text">Upravte svůj uživatelský profil a údaje.</p>
+                        <a asp-controller="Account" asp-action="Profile" class="btn btn-outline-light">Správa profilu</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card bg-success text-white shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Přidat záznam</h5>
+                        <p class="card-text">Přidejte nový záznam do databáze.</p>
+                        <a asp-controller="DB" asp-action="Add" class="btn btn-outline-light">Přidat záznam</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
-
-<hr />
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-
-<div class="container">
-    <h3>Dostupné Sekce</h3>
-    <ul>
-        <li><a asp-controller="DB" asp-action="Browse" asp-route-section="Predmety">Předměty</a></li>
-        <li><a asp-controller="DB" asp-action="Browse" asp-route-section="Autori">Autoři</a></li>
-        <li><a asp-controller="DB" asp-action="Browse" asp-route-section="Sbirky">Sbírky</a></li>
-        <!-- další sekce-->
-    </ul>
-</div>
-
-@if (User.Identity.IsAuthenticated)
-{
-   <div class="container mt-4">
-       <h3>Content</h3>
-       <ul>
-            <li><a asp-controller="Account" asp-action="Profile">Správa profilu</a></li>
-            <li><a asp-controller="DB" asp-action="Add">Přidat nový záznam</a></li>
-       </ul>
-   </div>
-}

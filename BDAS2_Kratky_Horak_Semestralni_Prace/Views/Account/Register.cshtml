@@ -1,30 +1,49 @@
-﻿@{
-	ViewData["Title"] = "Registrace";
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Registrace";
 }
 
 <h2>Registrace</h2>
 
-<form method="post" asp-controller="Account" asp-action="Register">
-
-<div class="form-group">
-<label>Uživatelské Jméno:</label>
-<input type="text" name="username" class="form-control" required />
-</div>
-
-<div class="form-group">
-	<label>Heslo:</label>
-	<input type="password" name="password" class="form-control" required />
-</div>
-
-<button type="submit" class="btn btn-primary mt-3">Registrovat</button>
+<form method="post" asp-controller="Account" asp-action="RegisterNewEmployee">
+    <div class="form-group">
+        <label>Jméno:</label>
+        <input type="text" asp-for="Jmeno" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Příjmení:</label>
+        <input type="text" asp-for="Prijmeni" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Email:</label>
+        <input type="email" asp-for="Email" class="form-control" required /> <!-- Přidáno pole pro email -->
+    </div>
+    <div class="form-group">
+        <label>Uživatelské Jméno:</label>
+        <input type="text" asp-for="Username" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Heslo:</label>
+        <input type="password" asp-for="Password" class="form-control" required />
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" asp-for="IsExistingEmployee" class="form-check-input" />
+        <label class="form-check-label" asp-for="IsExistingEmployee">Jsem již zaměstnanec</label>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Registrovat</button>
 </form>
 
 @if (!ViewData.ModelState.IsValid)
 {
-	<div class="text-danger">
-		@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-		{
-			<p>@error.ErrorMessage</p>
-		}
-	</div>
+    <div class="text-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

@@ -14,20 +14,22 @@
         public DateTime DatumZamestnani { get; set; }
         public string TypSmlouva { get; set; }
         public decimal Plat {  get; set; }
-        public int Pohlavi { get; set; }
+        public int? Pohlavi { get; set; }
         //FK
         public int IdOddeleni { get; set; } //Odkaz na oddělení , ve kterém zaměstnanec pracuje
         public int IdAdresa { get; set; } //odkaz na adresu zamestnance
 
-        public int IdRecZamestnanec { get; set; }
+        public int? IdRecZamestnanec { get; set; }
         //Navigační vlastnosti test
 
         public Oddeleni Oddeleni { get; set; }
         public Adresa Adresa { get; set; }
-        public Zamestnanec RedZamestnanec { get; set; }
+        public Zamestnanec RecZamestnanec { get; set; }
 
         //loginy
         public string Username { get; set; }
         public string Password { get; set; } //uložený hash hesla
+
+        public string Role {  get; set; }
     }
 }

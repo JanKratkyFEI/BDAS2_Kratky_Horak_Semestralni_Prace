@@ -1,0 +1,19 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.DatabaseObjectsViewModel
+<h2> Seznam Databázových Objecktů</h2>
+
+<h3>Tabulky</h3>
+<ul>
+	@foreach(var table in Model.Tables)
+	{
+		<li>@table</li>
+	}
+</ul>
+
+<h3>
+<ul>
+	@foreach (var trigger in Model.Triggers)
+		{
+			<li>@trigger</li>
+		}
+	</ul>
+</h3>

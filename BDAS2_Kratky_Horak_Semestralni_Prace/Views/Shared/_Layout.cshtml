@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BDAS2_Kratky_Horak_Semestralni_Prace</title>
+    <title>@ViewData["Title"] - Muzeiní sbírky - Krátký_BDAS2</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BDAS2_Kratky_Horak_Semestralni_Prace.styles.css" asp-append-version="true" />
@@ -13,39 +13,53 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BDAS2_Kratky_Horak_Semestralni_Prace</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Muzeiní Sbírky</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-
-                        <!-- Povolené odkazy pro neregistrovaného uživatele -->
+                <div class="navbar-collapse collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Domů</a>
+                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Domů</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DB" asp-action="TestConnection">Prohlížet Data</a>
+                            <a class="nav-link text-light" asp-controller="DB" asp-action="TestConnection">Prohlížet Data</a>
                         </li>
+                        @if (httpContextAccessor.HttpContext.Session.GetString("IsLoggedIn") == "true")
+                        {
+                            <!-- Menu pro přihlášené uživatele -->
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="DB" asp-action="ObjectsList">Seznam DB Objektů</a>
+                            </li>
+                        }
                     </ul>
-                    <!-- Přihlašovací odkaz v pravé části -->
                     <ul class="navbar-nav">
                         @if (httpContextAccessor.HttpContext.Session.GetString("IsLoggedIn") == "true")
                         {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Profil
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Můj profil</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Settings">Nastavení</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="SearchEmployees">Najít zaměstnance</a></li>
+                                </ul>
+                            </li>
                             <li class="nav-item">
-                                <span class="nav-link">Přihlášen jako: @httpContextAccessor.HttpContext.Session.GetString("Username")</span>
+                                <span class="nav-link text-light">Přihlášen jako: @httpContextAccessor.HttpContext.Session.GetString("Username")</span>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="nav-link">
-                                    <button type="submit" class="btn btn-link">Odhlásit se</button>
+                                    <button type="submit" class="btn btn-outline-light">Odhlásit se</button>
                                 </form>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Přihlášení</a>
+                                <a class="nav-link btn btn-outline-primary" asp-controller="Account" asp-action="Login">Přihlášení</a>
                             </li>
                         }
                     </ul>
@@ -54,15 +68,16 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container mt-3">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted bg-dark text-center text-white py-3">
         <div class="container">
-            &copy; 2024 - BDAS2_Kratky_Horak_Semestralni_Prace - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Muzejní Databáze | <a class="text-light" asp-controller="Home" asp-action="Privacy">Ochrana údajů</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

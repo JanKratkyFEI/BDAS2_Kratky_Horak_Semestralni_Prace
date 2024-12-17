@@ -184,6 +184,20 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 			return RedirectToAction("Index");
 		}
 
+
+        public IActionResult ShowDatabaseObjects()
+        {
+            var tables = _connectionString.GetUserTables();
+            var triggers = _connectionString.GetUserTriggers();
+
+            var model = new DatabaseObjectsViewModel
+            {
+                Tables = tables,
+                Triggers = triggers
+            };
+
+            return View(model);
+        }
 	}
 }
 

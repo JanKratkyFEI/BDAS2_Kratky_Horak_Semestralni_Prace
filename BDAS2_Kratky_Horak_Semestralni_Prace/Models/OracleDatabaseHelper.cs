@@ -54,9 +54,9 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-               // var query = "INSERT INTO MATERIAL (ID_MATERIAL, NAZEV) VALUES (S_MATERIAL.nextval, :nazev)";
+                // var query = "INSERT INTO MATERIAL (ID_MATERIAL, NAZEV) VALUES (S_MATERIAL.nextval, :nazev)";
 
-                using(var command = new OracleCommand("INSERT_MATERIAL", connection))
+                using (var command = new OracleCommand("INSERT_MATERIAL", connection))
                 {
                     command.Parameters.Add(new OracleParameter("nazev", material.Nazev));
                     command.ExecuteNonQuery();
@@ -68,7 +68,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-               // var query = "INSERT INTO ZEME (ID_ZEME, NAZEV, STUPEN_NEBEZPECI) VALUES (S_ZEME.nextval, :nazev, :stupenNebezpeci)";
+                // var query = "INSERT INTO ZEME (ID_ZEME, NAZEV, STUPEN_NEBEZPECI) VALUES (S_ZEME.nextval, :nazev, :stupenNebezpeci)";
 
                 using (var command = new OracleCommand("INSERT_ZEME", connection))
                 {
@@ -84,7 +84,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-               // var query = "INSERT INTO FOTOGRAFIE (ID_PREDMET, NAZEV, POPIS, ZANR, LICENCE) VALUES (:IdPredmet, :Nazev, :Popis, :Zanr, :Licence)";
+                // var query = "INSERT INTO FOTOGRAFIE (ID_PREDMET, NAZEV, POPIS, ZANR, LICENCE) VALUES (:IdPredmet, :Nazev, :Popis, :Zanr, :Licence)";
 
                 using (var command = new OracleCommand("INSERT_FOTOGRAFIE", connection))
                 {
@@ -227,7 +227,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
         }
 
-        public Material GetMaterialById(int id) 
+        public Material GetMaterialById(int id)
         {
             Material material = null;
 
@@ -256,7 +256,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
             return material;
         }
-            public List<Autor> GetAutori()
+        public List<Autor> GetAutori()
         {
             var autori = new List<Autor>();
 
@@ -404,7 +404,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                                 IdRecZamestnanec = reader.GetInt32(reader.GetOrdinal("IdRecZamestnanec")),
                                 Username = reader.GetString(reader.GetOrdinal("Username")),
                                 Password = reader.GetString(reader.GetOrdinal("Password"))
-                            
+
                             });
                         }
                     }
@@ -422,12 +422,26 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             {
                 connection.Open();
                 var query = @"
-            SELECT
-            IdZamestnanec, Pozice, Jmeno, Prijmeni, Email, Telefon, 
-            RodneCislo, DatumZamestnani, TypSmlouva, Plat, Pohlavi, 
-            IdAdresa, IdOddeleni, IdRecZamestnanec, Username, Password
-            FROM Zamestnanec
-            WHERE Username = :username";
+            SELECT 
+                ID_ZAMESTNANEC, 
+                POZICE, 
+                JMENO, 
+                PRIJMENI, 
+                EMAIL, 
+                TELEFON, 
+                RODNE_CISLO, 
+                DATUM_ZAMESTNANI, 
+                TYP_SMLOUVA, 
+                PLAT, 
+                POHLAVI, 
+                ID_ADRESA, 
+                ID_ODDELENI, 
+                ID_REC_ZAMESTNANEC,
+                USERNAME, 
+                PASSWORD,
+                ROLE
+            FROM ZAMESTNANEC
+            WHERE USERNAME = :Username"; ;
                 using (var command = new OracleCommand(query, connection))
                 {
                     command.Parameters.Add(new OracleParameter("username", username));
@@ -438,22 +452,23 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                         {
                             zamestnanec = new Zamestnanec
                             {
-                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("IdZamestnanec")),
-                                Pozice = reader.GetString(reader.GetOrdinal("Pozice")),
-                                Jmeno = reader.GetString(reader.GetOrdinal("Jmeno")),
-                                Prijmeni = reader.GetString(reader.GetOrdinal("Prijmeni")),
-                                Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Telefon = reader.GetString(reader.GetOrdinal("Telefon")),
-                                RodCislo = reader.GetString(reader.GetOrdinal("RodneCislo")),
-                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DatumZamestnani")),
-                                TypSmlouva = reader.GetString(reader.GetOrdinal("TypSmlouva")),
-                                Plat = reader.GetDecimal(reader.GetOrdinal("Plat")),
-                                Pohlavi = reader.GetInt32(reader.GetOrdinal("Pohlavi")),
-                                IdAdresa = reader.GetInt32(reader.GetOrdinal("IdAdresa")),
-                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("IdOddeleni")),
-                                IdRecZamestnanec = reader.GetInt32(reader.GetOrdinal("IdRecZamestnanec")),
-                                Username = reader.GetString(reader.GetOrdinal("Username")),
-                                Password = reader.GetString(reader.GetOrdinal("Password"))
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Email = reader.GetString(reader.GetOrdinal("EMAIL")),
+                                Telefon = reader.GetString(reader.GetOrdinal("TELEFON")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
+                                Pohlavi = reader.IsDBNull(reader.GetOrdinal("POHLAVI")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("POHLAVI")),
+                                IdAdresa = reader.GetInt32(reader.GetOrdinal("ID_ADRESA")),
+                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("ID_ODDELENI")),
+                                IdRecZamestnanec = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC")),
+                                Username = reader.IsDBNull(reader.GetOrdinal("USERNAME")) ? null : reader.GetString(reader.GetOrdinal("USERNAME")),
+                                Password = reader.IsDBNull(reader.GetOrdinal("PASSWORD")) ? null : reader.GetString(reader.GetOrdinal("PASSWORD")),
+                                Role = reader.IsDBNull(reader.GetOrdinal("ROLE")) ? null : reader.GetString(reader.GetOrdinal("ROLE"))
                             };
                         }
                     }
@@ -474,8 +489,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                     command.Parameters.Add("Jmeno", OracleDbType.Varchar2).Value = jmeno;
                     command.Parameters.Add("Prijmeni", OracleDbType.Varchar2).Value = prijmeni;
 
-                    using(var reader = command.ExecuteReader())
-            {
+                    using (var reader = command.ExecuteReader())
+                    {
                         if (reader.Read())
                         {
                             return new Zamestnanec
@@ -493,9 +508,57 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
             return null; // Pokud zaměstnanec s daným jménem a příjmením neexistuje
         }
-            
+
+        public Zamestnanec GetZamestnanecById(int idZamestnanec)
+        {
+            Zamestnanec zamestnanec = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+                ID_ZAMESTNANEC, POZICE, JMENO, PRIJMENI, EMAIL, TELEFON, 
+                RODNE_CISLO, DATUM_ZAMESTNANI, TYP_SMLOUVA, PLAT, POHLAVI, 
+                ID_ADRESA, ID_ODDELENI, ID_REC_ZAMESTNANEC, USERNAME, PASSWORD, ROLE
+            FROM ZAMESTNANEC
+            WHERE ID_ZAMESTNANEC = :IdZamestnanec";
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("IdZamestnanec", idZamestnanec));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            zamestnanec = new Zamestnanec
+                            {
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Email = reader.GetString(reader.GetOrdinal("EMAIL")),
+                                Telefon = reader.GetString(reader.GetOrdinal("TELEFON")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
+                                Pohlavi = reader.IsDBNull(reader.GetOrdinal("POHLAVI")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("POHLAVI")),
+                                IdAdresa = reader.GetInt32(reader.GetOrdinal("ID_ADRESA")),
+                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("ID_ODDELENI")),
+                                IdRecZamestnanec = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC")),
+                                Username = reader.IsDBNull(reader.GetOrdinal("USERNAME")) ? null : reader.GetString(reader.GetOrdinal("USERNAME")),
+                                Password = reader.IsDBNull(reader.GetOrdinal("PASSWORD")) ? null : reader.GetString(reader.GetOrdinal("PASSWORD")),
+                                Role = reader.IsDBNull(reader.GetOrdinal("ROLE")) ? null : reader.GetString(reader.GetOrdinal("ROLE"))
+                            };
+                        }
+                    }
+                }
+            }
+            return zamestnanec;
+        }
 
         
+
 
         public List<Adresa> GetAdresy()
         {
@@ -544,6 +607,37 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                     cmd.Parameters.Add(new OracleParameter("popis", predmet.Popis));
 
                     cmd.ExecuteNonQuery(); // vykonání dotazu
+                }
+            }
+        }
+
+        public void InsertZamestnanec(Zamestnanec zamestnanec)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("INSERT_BALICEK.INSERT_ZAMESTNANEC", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.Add("p_pozice", OracleDbType.Varchar2).Value = zamestnanec.Pozice ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
+                    command.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
+                    command.Parameters.Add("p_email", OracleDbType.Varchar2).Value = zamestnanec.Email;
+                    command.Parameters.Add("p_telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_rodne_cislo", OracleDbType.Varchar2).Value = zamestnanec.RodCislo ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_datum_zamestnani", OracleDbType.Date).Value = zamestnanec.DatumZamestnani;
+                    command.Parameters.Add("p_typ_smlouva", OracleDbType.Varchar2).Value = zamestnanec.TypSmlouva ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_plat", OracleDbType.Decimal).Value = zamestnanec.Plat;
+                    command.Parameters.Add("p_pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi.HasValue ? (object)zamestnanec.Pohlavi.Value : DBNull.Value; // Změněno na Int32
+                    command.Parameters.Add("p_id_adresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
+                    command.Parameters.Add("p_id_oddeleni", OracleDbType.Int32).Value = zamestnanec.IdOddeleni;
+                    command.Parameters.Add("p_id_rec_zamestnanec", OracleDbType.Int32).Value = zamestnanec.IdRecZamestnanec.HasValue ? (object)zamestnanec.IdRecZamestnanec.Value : DBNull.Value;
+                    command.Parameters.Add("p_username", OracleDbType.Varchar2).Value = zamestnanec.Username;
+                    command.Parameters.Add("p_password", OracleDbType.Varchar2).Value = zamestnanec.Password;
+                    command.Parameters.Add("p_role", OracleDbType.Varchar2).Value = zamestnanec.Role;
+
+                    command.ExecuteNonQuery();
                 }
             }
         }
@@ -695,7 +789,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 {
                     command.Parameters.Add(new OracleParameter("id", id));
 
-                    using(var reader = command.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
@@ -764,49 +858,78 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-               /* var query = @"
-            UPDATE ZAMESTNANEC 
-    SET 
-        USERNAME = COALESCE(:Username, USERNAME),
-        PASSWORD = COALESCE(:Password, PASSWORD),
-        JMENO = COALESCE(:Jmeno, JMENO),
-        PRIJMENI = COALESCE(:Prijmeni, PRIJMENI),
-        EMAIL = COALESCE(:Email, EMAIL),
-        TELEFON = COALESCE(:Telefon, TELEFON),
-        RODNE_CISLO = COALESCE(:RodneCislo, RODNE_CISLO),
-        DATUM_ZAMESTNANI = COALESCE(:DatumZamestnani, DATUM_ZAMESTNANI),
-        TYP_SMLOUVA = COALESCE(:TypSmlouva, TYP_SMLOUVA),
-        PLAT = COALESCE(:Plat, PLAT),
-        POHLAVI = COALESCE(:Pohlavi, POHLAVI),
-        ID_ADRESA = COALESCE(:IdAdresa, ID_ADRESA),
-        ID_ODDELENI = COALESCE(:IdOddeleni, ID_ODDELENI),
-        ID_REC_ZAMESTNANEC = COALESCE(:IdRecZamestnanec, ID_REC_ZAMESTNANEC)
-    WHERE ID_ZAMESTNANEC = :IdZamestnanec"; ;*/
 
-                using (var command = new OracleCommand("UPDATE_ZAMESTNANEC", connection))
+
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_ZAMESTNANEC", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add("Username", OracleDbType.Varchar2).Value = zamestnanec.Username ?? (object)DBNull.Value;
-                    command.Parameters.Add("Password", OracleDbType.Varchar2).Value = zamestnanec.Password ?? (object)DBNull.Value;
-                    command.Parameters.Add("Jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
-                    command.Parameters.Add("Prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
-                    command.Parameters.Add("Email", OracleDbType.Varchar2).Value = zamestnanec.Email ?? (object)DBNull.Value;
-                    command.Parameters.Add("Telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon ?? (object)DBNull.Value;
-                    command.Parameters.Add("RodneCislo", OracleDbType.Varchar2).Value = zamestnanec.RodCislo ?? (object)DBNull.Value;
-                    command.Parameters.Add("DatumZamestnani", OracleDbType.Date).Value = zamestnanec.DatumZamestnani;
-                    command.Parameters.Add("TypSmlouva", OracleDbType.Varchar2).Value = zamestnanec.TypSmlouva;
-                    command.Parameters.Add("Plat", OracleDbType.Decimal).Value = zamestnanec.Plat;
-                    command.Parameters.Add("Pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi;
-                    command.Parameters.Add("IdAdresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
-                    command.Parameters.Add("IdOddeleni", OracleDbType.Int32).Value = zamestnanec.IdOddeleni;
-                    command.Parameters.Add("IdRecZamestnanec", OracleDbType.Int32).Value = zamestnanec.IdRecZamestnanec;
-                    command.Parameters.Add("IdZamestnanec", OracleDbType.Int32).Value = zamestnanec.IdZamestnanec;
+                    command.Parameters.Add("p_IdZamestnanec", OracleDbType.Int32).Value = zamestnanec.IdZamestnanec;
+                    command.Parameters.Add("p_Pozice", OracleDbType.Varchar2).Value = zamestnanec.Pozice;
+                    command.Parameters.Add("p_Jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
+                    command.Parameters.Add("p_Prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
+                    command.Parameters.Add("p_Email", OracleDbType.Varchar2).Value = zamestnanec.Email;
+                    command.Parameters.Add("p_Telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon;
+                    command.Parameters.Add("p_RodneCislo", OracleDbType.Varchar2).Value = zamestnanec.RodCislo;
+                    command.Parameters.Add("p_DatumZamestnani", OracleDbType.Date).Value = zamestnanec.DatumZamestnani;
+                    command.Parameters.Add("p_TypSmlouva", OracleDbType.Varchar2).Value = zamestnanec.TypSmlouva;
+                    command.Parameters.Add("p_Plat", OracleDbType.Decimal).Value = zamestnanec.Plat;
+                    command.Parameters.Add("p_Pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi.HasValue ? (object)zamestnanec.Pohlavi.Value : DBNull.Value;
+                    command.Parameters.Add("p_IdAdresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
+                    command.Parameters.Add("p_IdOddeleni", OracleDbType.Int32).Value = zamestnanec.IdOddeleni;
+                    command.Parameters.Add("p_IdRecZamestnanec", OracleDbType.Int32).Value = zamestnanec.IdRecZamestnanec ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_Username", OracleDbType.Varchar2).Value = zamestnanec.Username ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_Password", OracleDbType.Varchar2).Value = zamestnanec.Password ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_Role", OracleDbType.Varchar2).Value = zamestnanec.Role;
+
+
 
                     command.ExecuteNonQuery();
                 }
 
             }
         }
+
+        public void UpdateZamestnanecLoginData(int idZamestnanec, string role, string username, string password)
+        {
+            Zamestnanec zamestnanec = GetZamestnanecById(idZamestnanec);
+            if (zamestnanec != null)
+            {
+                zamestnanec.Role = role ?? zamestnanec.Role;
+                zamestnanec.Username = username ?? zamestnanec.Username;
+                zamestnanec.Password = password ?? zamestnanec.Password;
+            }
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_ZAMESTNANEC", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Předání všech parametrů do procedury, stávající hodnoty se ponechají tam, kde nebyla změna
+                    command.Parameters.Add("p_id_zamestnanec", OracleDbType.Int32).Value = zamestnanec.IdZamestnanec;
+                    command.Parameters.Add("p_pozice", OracleDbType.Varchar2).Value = zamestnanec.Pozice;
+                    command.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
+                    command.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
+                    command.Parameters.Add("p_email", OracleDbType.Varchar2).Value = zamestnanec.Email;
+                    command.Parameters.Add("p_telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon;
+                    command.Parameters.Add("p_rodne_cislo", OracleDbType.Varchar2).Value = zamestnanec.RodCislo;
+                    command.Parameters.Add("p_datum_zamestnani", OracleDbType.Date).Value = zamestnanec.DatumZamestnani;
+                    command.Parameters.Add("p_typ_smlouva", OracleDbType.Varchar2).Value = zamestnanec.TypSmlouva;
+                    command.Parameters.Add("p_plat", OracleDbType.Decimal).Value = zamestnanec.Plat;
+                    command.Parameters.Add("p_pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi.HasValue ? (object)zamestnanec.Pohlavi.Value : DBNull.Value;
+                    command.Parameters.Add("p_id_adresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
+                    command.Parameters.Add("p_id_oddeleni", OracleDbType.Int32).Value = zamestnanec.IdOddeleni;
+                    command.Parameters.Add("p_id_rec_zamestnanec", OracleDbType.Int32).Value = zamestnanec.IdRecZamestnanec.HasValue ? (object)zamestnanec.IdRecZamestnanec.Value : DBNull.Value;
+                    command.Parameters.Add("p_username", OracleDbType.Varchar2).Value = zamestnanec.Username ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_password", OracleDbType.Varchar2).Value = zamestnanec.Password ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_role", OracleDbType.Varchar2).Value = zamestnanec.Role ?? (object)DBNull.Value;
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
         public void UpdateZeme(Zeme zeme)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -831,7 +954,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-               // var query = "UPDATE MATERIAL SET NAZEV = :nazev WHERE ID_MATERIAL = :id";
+                // var query = "UPDATE MATERIAL SET NAZEV = :nazev WHERE ID_MATERIAL = :id";
 
                 using (var command = new OracleCommand("UPDATE_MATERIAL", connection))
                 {
@@ -876,6 +999,48 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
         }
 
+        //pro systémový katalog
+        public List<string> GetUserTables()
+        {
+            var tables = new List<string>();
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT TABLE_NAME FROM USER_TABLES";
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            tables.Add(reader.GetString(0));
+                        }
+                    }
+                }
+            }
+            return tables;
+        }
+
+        public List<string> GetUserTriggers()
+        {
+            var triggers = new List<string>();
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT TRIGGER_NAME FROM USER_TRIGGERS";
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using(var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            triggers.Add(reader.GetString(0));
+                        }
+                    }
+                }
+            }
+            return triggers;
+        }
 
 
         public void TestConnection()

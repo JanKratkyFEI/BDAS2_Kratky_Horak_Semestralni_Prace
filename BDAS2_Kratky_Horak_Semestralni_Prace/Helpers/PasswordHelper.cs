@@ -22,10 +22,10 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Helpers
 
         }
 
-        public static bool VerifyPassword(string password, string hashedPassword)
+        public static bool VerifyPassword(string enteredPassword, string hashedPassword)
         {
             //Hash zadaného hesla
-            string hashedInputPassword = HashPassword(password);
+            string hashedInputPassword = HashPassword(enteredPassword);
 
             //porovná hash zadanýho hesla s uloženým hashovaným heslem
             return hashedInputPassword == hashedPassword;

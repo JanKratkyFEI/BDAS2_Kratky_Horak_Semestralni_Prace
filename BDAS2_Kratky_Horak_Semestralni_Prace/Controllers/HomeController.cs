@@ -8,6 +8,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;

@@ -1,0 +1,21 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zamestnanec
+
+<div class="container mt-4">
+    <h2>Můj Profil</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <img src="@(Model.ProfilePictureUrl ?? "/images/default-profile.png")" class="img-thumbnail" alt="Profilová fotka" />
+        </div>
+        <div class="col-md-9">
+            <p><strong>Jméno:</strong> @Model.Jmeno</p>
+            <p><strong>Příjmení:</strong> @Model.Prijmeni</p>
+            <p><strong>Uživatelské jméno:</strong> @Model.Username</p>
+            <p><strong>Role:</strong> @Model.Role</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+
+            <a asp-action="EditProfile" class="btn btn-primary">Změnit údaje</a>
+            <a asp-action="Settings" class="btn btn-secondary">Nastavení</a>
+        </div>
+    </div>
+</div>
+
