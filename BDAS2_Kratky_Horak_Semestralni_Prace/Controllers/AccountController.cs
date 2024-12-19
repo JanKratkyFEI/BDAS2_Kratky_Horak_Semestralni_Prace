@@ -173,19 +173,30 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             {
                 return NotFound("Zaměstnanec nebyl nalezen.");
             }
+           
 
             return View(zamestnanec);
         }
 
         [HttpGet]
-        public IActionResult SearchEmployees(string searchQuery)
+        public IActionResult EmployeeProfile(int id)
         {
-            var employees = _connectionString.GetZamestnanci()
-                .Where(e => e.Jmeno.Contains(searchQuery) || e.Prijmeni.Contains(searchQuery))
-                .ToList();
+            var zamestnanec = _connectionString.GetZamestnanecFromView(id);
+            if (zamestnanec == null)
+            {
+                return NotFound();
+            }
+
+            return View(zamestnanec);
+        }
+
+        [HttpGet]
+        public IActionResult Search(string searchQuery)
+        {
+            var employees = _connectionString.SearchZamestnanci(searchQuery ?? string.Empty);
 
             return View(employees);
         }
 
-        }
+    }
     }

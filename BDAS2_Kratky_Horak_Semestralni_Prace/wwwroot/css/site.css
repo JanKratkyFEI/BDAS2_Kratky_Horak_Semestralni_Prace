@@ -82,3 +82,8 @@ footer {
         footer a:hover {
             color: #fff;
         }
+
+.table-container {
+    max-height: 70vh; /*  maximální výška oblasti tabulky */
+    overflow-y: auto; /* vertikální scrollování */
+}

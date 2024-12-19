@@ -16,7 +16,9 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         {
             // Inicializace OracleDatabaseHelper s connection stringem z konfigurace
             string connectionString = configuration.GetConnectionString("OracleDbConnection");
-            _connectionString = new OracleDatabaseHelper(connectionString);
+             _connectionString = new OracleDatabaseHelper(connectionString);
+            
+            
         }
 
         public IActionResult TestConnection()
@@ -198,6 +200,19 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
             return View(model);
         }
-	}
+
+
+        
+
+        [HttpGet]
+        public IActionResult SearchEmploy(string searchQuery)
+        {
+            var zamestnanci = _connectionString.SearchZamestnanci(searchQuery);
+            return View(zamestnanci);
+        }
+
+        
+
+    }
 }
 

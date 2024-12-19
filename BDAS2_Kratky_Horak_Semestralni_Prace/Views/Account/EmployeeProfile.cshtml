@@ -1,0 +1,32 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zamestnanec
+
+<div class="container mt-4">
+    <h2>Profil zaměstnance</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <img src="@(Model.ProfilePictureUrl ?? "/images/default_pfp.jpg")" class="img-thumbnail" alt="Profilová fotka" style="width: 50%;" />
+        </div>
+        <!-- Detaily zaměstnance -->
+        <div class="col-md-9">
+            <p><strong>Jméno:</strong> @Model.Jmeno</p>
+            <p><strong>Příjmení:</strong> @Model.Prijmeni</p>
+            <p><strong>Role:</strong> @Model.Role</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Telefon:</strong> @Model.Telefon</p>
+            <p><strong>Pozice:</strong> @Model.Pozice</p>
+            <p><strong>Rodné číslo:</strong> @Model.RodCislo</p>
+            <p><strong>Datum zaměstnání:</strong> @Model.DatumZamestnani.ToShortDateString()</p>
+            <p><strong>Typ smlouvy:</strong> @Model.TypSmlouva</p>
+            <p><strong>Plat:</strong> @Model.Plat.ToString("C")</p>
+            <p><strong>Pohlaví:</strong> @(Model.Pohlavi.HasValue ? (Model.Pohlavi == 1 ? "Muž" : "Žena") : "Neuvedeno")</p>
+            <p><strong>Adresa:</strong> @Model.AdresaText</p>
+            <p><strong>Oddělení:</strong> @Model.OddeleniText</p>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Search" class="btn btn-secondary">Zpět na vyhledávání</a>
+</div>
+
+

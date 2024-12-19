@@ -38,5 +38,13 @@
         //idtostring
         public string AdresaText { get; set; }
         public string OddeleniText { get; set; }
+
+
+        //int to stirng
+        public string PohlaviText { get; set; }
+
+
+
+
     }
 }

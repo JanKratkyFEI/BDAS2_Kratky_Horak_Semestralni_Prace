@@ -1,0 +1,37 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zamestnanec>
+
+<div class="container mt-4">
+    <h2>Vyhledat zaměstnance</h2>
+    <form asp-action="SearchEmployees" method="get" class="mb-4">
+        <input type="text" name="searchQuery" value="@ViewData["SearchQuery"]" placeholder="Hledat" class="form-control" />
+        <button type="submit" class="btn btn-primary mt-2">Hledat</button>
+    </form>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Profil</th>
+                    <th>Jméno</th>
+                    <th>Příjmení</th>
+                    <th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var zamestnanec in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@(zamestnanec.ProfilePictureUrl ?? "/images/default_pfp.jpg")" alt="Profilová fotka" style="width: 50px; height: 50px; border-radius: 50%;" />
+                        </td>
+                        <td>@zamestnanec.Jmeno</td>
+                        <td>@zamestnanec.Prijmeni</td>
+                        <td>
+                            <a asp-controller="Account" asp-action="EmployeeProfile" asp-route-id="@zamestnanec.IdZamestnanec" class="btn btn-link">Zobrazit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+</div>

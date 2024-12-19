@@ -19,6 +19,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         {
             _connectionString = connectionString;
         }
+        public string ConnectionString => _connectionString;
 
         //ADD METODY
         public void AddZamestnanec(Zamestnanec zamestnanec)
@@ -365,7 +366,57 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             return predmety;
         }
 
-        public List<Zamestnanec> GetZamestnanci()
+        public List<Zamestnanec> SearchZamestnanci(string searchQuery)
+        {
+            var result = new List<Zamestnanec>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+        SELECT 
+            ID_ZAMESTNANEC, JMENO, PRIJMENI, EMAIL, TELEFON, POZICE, ROLE,
+            NAZEV_ADRESY, NAZEV_ODDELENI, RODNE_CISLO, DATUM_ZAMESTNANI, 
+            TYP_SMLOUVA, PLAT, POHLAVI
+        FROM ZAMESTNANEC_PRIVACY_VIEW
+        WHERE LOWER(JMENO) LIKE '%' || :SearchQuery || '%'
+           OR LOWER(PRIJMENI) LIKE '%' || :SearchQuery || '%'";
+
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add("SearchName", OracleDbType.Varchar2).Value = (searchQuery?? string.Empty).ToLower();
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(new Zamestnanec
+                            {
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Email = reader.GetString(reader.GetOrdinal("EMAIL")),
+                                Telefon = reader.GetString(reader.GetOrdinal("TELEFON")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                Role = reader.GetString(reader.GetOrdinal("ROLE")),
+                                AdresaText = reader.GetString(reader.GetOrdinal("NAZEV_ADRESY")),
+                                OddeleniText = reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
+                                
+                            });
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public List<Zamestnanec> GetZamestnanci(string searchQuery = null)
         {
             var zamestnanci = new List<Zamestnanec>();
 
@@ -373,38 +424,41 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             {
                 connection.Open();
                 var query = @"
-            SELECT 
-        IdZamestnanec, Pozice, Jmeno, Prijmeni, Email, Telefon, 
-        RodneCislo, DatumZamestnani, TypSmlouva, Plat, Pohlavi, 
-        IdAdresa, IdOddeleni, IdRecZamestnanec, Username, Password
-        FROM Zamestnanec
-            FROM Zamestnanec";
+           SELECT 
+                ID_ZAMESTNANEC, JMENO, PRIJMENI, EMAIL, TELEFON, POZICE, ROLE,
+                NAZEV_ADRESY, NAZEV_ODDELENI, RODNE_CISLO, DATUM_ZAMESTNANI,
+                TYP_SMLOUVA, PLAT, POHLAVI
+            FROM ZAMESTNANEC_PRIVACY_VIEW
+            WHERE (:SearchQuery IS NULL OR LOWER(JMENO) LIKE '%' || :SearchQuery || '%'
+                OR LOWER(PRIJMENI) LIKE '%' || :SearchQuery || '%')";
+
 
                 using (var command = new OracleCommand(query, connection))
                 {
+                    command.Parameters.Add("SearchQuery", OracleDbType.Varchar2).Value = searchQuery?.ToLower() ?? (object)DBNull.Value;
+
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             zamestnanci.Add(new Zamestnanec
                             {
-                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("IdZamestnanec")),
-                                Pozice = reader.GetString(reader.GetOrdinal("Pozice")),
-                                Jmeno = reader.GetString(reader.GetOrdinal("Jmeno")),
-                                Prijmeni = reader.GetString(reader.GetOrdinal("Prijmeni")),
-                                Email = reader.GetString(reader.GetOrdinal("Email")),
-                                Telefon = reader.GetString(reader.GetOrdinal("Telefon")),
-                                RodCislo = reader.GetString(reader.GetOrdinal("RodneCislo")),
-                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DatumZamestnani")),
-                                TypSmlouva = reader.GetString(reader.GetOrdinal("TypSmlouva")),
-                                Plat = reader.GetDecimal(reader.GetOrdinal("Plat")),
-                                Pohlavi = reader.GetInt32(reader.GetOrdinal("Pohlavi")),
-                                IdAdresa = reader.GetInt32(reader.GetOrdinal("IdAdresa")),
-                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("IdOddeleni")),
-                                IdRecZamestnanec = reader.GetInt32(reader.GetOrdinal("IdRecZamestnanec")),
-                                Username = reader.GetString(reader.GetOrdinal("Username")),
-                                Password = reader.GetString(reader.GetOrdinal("Password"))
-
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Email = reader.GetString(reader.GetOrdinal("EMAIL")),
+                                Telefon = reader.GetString(reader.GetOrdinal("TELEFON")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                Role = reader.GetString(reader.GetOrdinal("ROLE")),
+                                AdresaText = reader.GetString(reader.GetOrdinal("NAZEV_ADRESY")),
+                                OddeleniText = reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
+                                PohlaviText = reader.IsDBNull(reader.GetOrdinal("POHLAVI"))
+                            ? "Neuvedeno"
+                            : reader.GetInt32(reader.GetOrdinal("POHLAVI")) == 1 ? "Muž" : "Žena"
                             });
                         }
                     }
@@ -566,15 +620,20 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 connection.Open();
                 var query = @"
             SELECT 
-            z.ID_ZAMESTNANEC, 
+            z.ID_ZAMESTNANEC,
+            z.POZICE,
             z.JMENO, 
             z.PRIJMENI, 
             z.EMAIL, 
             z.TELEFON,
-            z.POZICE,
+            z.RODNE_CISLO,
             z.DATUM_ZAMESTNANI,
+            z.TYP_SMLOUVA,
+            z.PLAT,
+            z.POHLAVI,
             a.ULICE || ', ' || a.PSC AS NAZEV_ADRESY,
-            o.NAZEV AS NAZEV_ODDELENI
+            o.NAZEV AS NAZEV_ODDELENI,
+            z.ROLE
         FROM 
             ZAMESTNANEC z
         LEFT JOIN ADRESA a ON z.ID_ADRESA = a.ID_ADRESA
@@ -592,14 +651,18 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                         {
                             // Uložení dat do paměti
                             var idZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC"));
+                            var pozice = reader.GetString(reader.GetOrdinal("POZICE"));
                             var jmeno = reader.GetString(reader.GetOrdinal("JMENO"));
                             var prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI"));
                             var email = reader.GetString(reader.GetOrdinal("EMAIL"));
                             var telefon = reader.GetString(reader.GetOrdinal("TELEFON"));
-                            var pozice = reader.GetString(reader.GetOrdinal("POZICE"));
+                            var rodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO"));
                             var datumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI"));
+                            var typSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA"));
+                            var plat = reader.GetInt32(reader.GetOrdinal("PLAT"));
                             var adresaText = reader.IsDBNull(reader.GetOrdinal("NAZEV_ADRESY")) ? "Neznámá adresa" : reader.GetString(reader.GetOrdinal("NAZEV_ADRESY"));
                             var oddeleniText = reader.IsDBNull(reader.GetOrdinal("NAZEV_ODDELENI")) ? "Neznámé oddělení" : reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI"));
+                            var role = reader.GetString(reader.GetOrdinal("ROLE"));
 
                             // Naplnění objektu
                             zamestnanec = new Zamestnanec
@@ -610,9 +673,13 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                                 Email = email,
                                 Telefon = telefon,
                                 Pozice = pozice,
+                                Plat = plat,
+                                TypSmlouva = typSmlouva,
+                                RodCislo = rodCislo,
                                 DatumZamestnani = datumZamestnani,
                                 AdresaText = adresaText,
-                                OddeleniText = oddeleniText
+                                OddeleniText = oddeleniText,
+                                Role = role
                             };
                         }
                     }
@@ -621,7 +688,71 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             return zamestnanec;
         }
 
-        
+
+        //pohled
+        public Zamestnanec GetZamestnanecFromView(int id)
+        {
+            Zamestnanec zamestnanec = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+           SELECT 
+                ID_ZAMESTNANEC,
+                JMENO,
+                PRIJMENI,
+                EMAIL,
+                TELEFON,
+                POZICE,
+                ROLE, 
+                NAZEV_ADRESY,
+                NAZEV_ODDELENI,
+                RODNE_CISLO,
+                DATUM_ZAMESTNANI, 
+                TYP_SMLOUVA,
+                PLAT,
+                POHLAVI
+            FROM 
+                ZAMESTNANEC_PRIVACY_VIEW
+            WHERE
+                ID_ZAMESTNANEC = :Id";
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add("Id", OracleDbType.Int32).Value = id;
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            zamestnanec = new Zamestnanec
+                            {
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Email = reader.GetString(reader.GetOrdinal("EMAIL")),
+                                Telefon = reader.GetString(reader.GetOrdinal("TELEFON")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                Role = reader.GetString(reader.GetOrdinal("ROLE")),
+                                AdresaText = reader.GetString(reader.GetOrdinal("NAZEV_ADRESY")),
+                                OddeleniText = reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
+                                PohlaviText = reader.IsDBNull(reader.GetOrdinal("POHLAVI"))
+    ? "Neuvedeno"
+    : reader.GetInt32(reader.GetOrdinal("POHLAVI")) == 1 ? "Muž" : "Žena",
+                            };
+                        }
+                    }
+                }
+            }
+
+            return zamestnanec;
+        }
+
+
 
 
         public List<Adresa> GetAdresy()
@@ -1094,7 +1225,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 var query = "SELECT TRIGGER_NAME FROM USER_TRIGGERS";
                 using (var command = new OracleCommand(query, connection))
                 {
-                    using(var reader = command.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -1105,6 +1236,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
             return triggers;
         }
+
+
 
 
         public void TestConnection()
