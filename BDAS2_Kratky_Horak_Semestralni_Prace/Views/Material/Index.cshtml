@@ -1,0 +1,37 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Material>
+
+<div class="container mt-4">
+    <h2>Správa Materiálů</h2>
+
+    <!-- Tlačítko pro přidání nového materiálu -->
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-primary">Přidat nový materiál</a>
+    </div>
+
+    <!-- Tabulka s materiály -->
+    <div class="scrollable">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Název Materiálu</th>
+                    <th class="text-center">Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var material in Model)
+                {
+                    <tr>
+                        <!-- Zobrazení názvu materiálu -->
+                        <td>@material.Nazev</td>
+                        <td class="text-center">
+                            <!-- Akce: Upravit a Smazat -->
+                            <a asp-action="Edit" asp-route-id="@material.IdMaterial" class="btn btn-warning btn-sm">Upravit</a>
+                            <a asp-action="Delete" asp-route-id="@material.IdMaterial" class="btn btn-danger btn-sm">Smazat</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+</div>

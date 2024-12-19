@@ -50,19 +50,29 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 }
             }
         }
+
         public void AddMaterial(Material material)
         {
-            using (var connection = new OracleConnection(_connectionString))
+            try
             {
-                connection.Open();
-                // var query = "INSERT INTO MATERIAL (ID_MATERIAL, NAZEV) VALUES (S_MATERIAL.nextval, :nazev)";
-
-                using (var command = new OracleCommand("INSERT_MATERIAL", connection))
+                using (var connection = new OracleConnection(_connectionString))
                 {
-                    command.Parameters.Add(new OracleParameter("nazev", material.Nazev));
-                    command.ExecuteNonQuery();
+                    connection.Open();
+                    // var query = "INSERT INTO MATERIAL (ID_MATERIAL, NAZEV) VALUES (S_MATERIAL.nextval, :nazev)";
+
+                    using (var command = new OracleCommand("INSERT_MATERIAL", connection))
+                    {
+                        // command.CommandType = CommandType.StoredProcedure; // Nastavení typu na uloženou proceduru
+                        command.Parameters.Add(new OracleParameter("nazev", material.Nazev));
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
+            catch (OracleException ex)
+            {
+                throw new Exception("Chyba při volání procedury INSERT_MATERIAL", ex);
+            }
+            
         }
         public void AddZeme(Zeme zeme)
         {
