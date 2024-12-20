@@ -23,24 +23,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Domů</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="tablesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
-                                Správa Tabulek
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="tablesDropdown">
-                                <li><a class="dropdown-item" asp-controller="DB" asp-action="Zamestnanci">Zaměstnanci</a></li>
-                                <li><a class="dropdown-item" asp-controller="DB" asp-action="Adresy">Adresy</a></li>
-                                <li><a class="dropdown-item" asp-controller="DB" asp-action="Oddeleni">Oddělení</a></li>
-                                <li><a class="dropdown-item" asp-controller="Material" asp-action="Index">Materiály</a></li>
-
-                                <!-- Další tabulky -->
-                            </ul>
-                        </li>
+                     
                         @if (httpContextAccessor.HttpContext.Session.GetString("IsLoggedIn") == "true")
                         {
                             <!-- Menu pro přihlášené uživatele -->
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-controller="DB" asp-action="ObjectsList">Seznam DB Objektů</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="tablesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Správa Tabulek
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="tablesDropdown">
+                                    <li><a class="dropdown-item" asp-controller="DB" asp-action="Zamestnanci">Zaměstnanci</a></li>
+                                    <li><a class="dropdown-item" asp-controller="DB" asp-action="Adresy">Adresy</a></li>
+                                    <li><a class="dropdown-item" asp-controller="DB" asp-action="Oddeleni">Oddělení</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Material" asp-action="Index">Materiály</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Zeme" asp-action="Index">Země</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Obec" asp-action="Index">Obce</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Muzeum" asp-action="Index">Muzea</a></li>
+                                </ul>
                             </li>
                         }
                     </ul>

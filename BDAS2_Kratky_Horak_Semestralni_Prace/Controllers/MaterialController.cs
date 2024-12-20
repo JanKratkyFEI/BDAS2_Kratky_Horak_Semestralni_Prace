@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
+    
     public class MaterialController : Controller
     {
 

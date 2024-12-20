@@ -1,0 +1,29 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Muzeum>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Seznam Muzeí</h2>
+    <a asp-action="Create" class="btn btn-primary">Přidat nové muzeum</a>
+</div>
+<div class="scrollable">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var muzeum in Model)
+            {
+                <tr>
+                    <td>@muzeum.Nazev</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@muzeum.IdMuzeum" class="btn btn-warning btn-sm">Upravit</a>
+                        <a asp-action="Delete" asp-route-id="@muzeum.IdMuzeum" class="btn btn-danger btn-sm">Smazat</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

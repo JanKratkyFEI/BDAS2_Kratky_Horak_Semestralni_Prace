@@ -1,0 +1,24 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Obec
+
+<h2>Přidat novou obec</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Nazev">Název obce</label>
+        <input type="text" class="form-control" id="Nazev" name="Nazev" value="@Model?.Nazev" required />
+    </div>
+
+    <div class="form-group">
+        <label for="IdZeme">Země</label>
+        <select class="form-control" id="IdZeme" name="IdZeme" required>
+            <option value="">Vyberte zemi</option>
+            @foreach (var zeme in ViewBag.ZemeList)
+            {
+                <option value="@zeme.IdZeme">@zeme.Nazev</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Přidat</button>
+</form>
+

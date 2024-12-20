@@ -1,0 +1,35 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zeme>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Seznam Zemí</h2>
+    <a asp-controller="Zeme" asp-action="Create" class="btn btn-primary">Přidat novou zemi</a>
+</div>
+
+<div class="scrollable">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Stupeň Nebezpečí</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var zeme in Model)
+            {
+                <tr>
+                    <td>@zeme.Nazev</td>
+                    <td>@zeme.StupenNebezpeci</td>
+                    <td>
+
+                        <a asp-action="Edit" asp-route-id="@zeme.IdZeme" class="btn btn-warning btn-sm">Upravit</a>
+                        <a asp-action="Delete" asp-route-id="@zeme.IdZeme" class="btn btn-danger btn-sm">Smazat</a>
+
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

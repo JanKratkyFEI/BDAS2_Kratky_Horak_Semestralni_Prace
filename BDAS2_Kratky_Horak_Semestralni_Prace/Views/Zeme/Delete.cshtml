@@ -1,0 +1,20 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zeme
+
+<div class="container mt-4">
+    <h2>Odstranit záznam</h2>
+    <p>Opravdu chcete odstranit tuto zemi?</p>
+    <dl class="row">
+        <dt class="col-sm-3">Název:</dt>
+        <dd class="col-sm-9">@Model.Nazev</dd>
+
+        <dt class="col-sm-3">Stupeň Nebezpečí:</dt>
+        <dd class="col-sm-9">@Model.StupenNebezpeci</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="IdZeme" />
+        <button type="submit" class="btn btn-danger">Smazat</button>
+        <a asp-action="Index" class="btn btn-secondary">Zpět</a>
+    </form>
+</div>
+

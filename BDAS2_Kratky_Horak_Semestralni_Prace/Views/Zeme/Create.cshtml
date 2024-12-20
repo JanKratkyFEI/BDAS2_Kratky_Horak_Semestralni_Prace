@@ -1,0 +1,17 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zeme
+
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="nazev">Název</label>
+        <input type="text" class="form-control" id="nazev" name="Nazev" required>
+        <span asp-validation-for="Nazev" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="stupenNebezpeci">Stupeň Nebezpečí</label>
+        <input type="number" class="form-control" id="stupenNebezpeci" name="StupenNebezpeci" required>
+        <span asp-validation-for="StupenNebezpeci" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Přidat</button>
+</form>

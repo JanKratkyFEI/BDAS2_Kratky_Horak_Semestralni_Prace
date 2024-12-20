@@ -1,0 +1,14 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Muzeum
+
+<h2>Přidat nové muzeum</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Nazev">Název</label>
+        <input type="text" asp-for="Nazev" class="form-control" />
+        <span asp-validation-for="Nazev" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Přidat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zpět</a>
+</form>
+

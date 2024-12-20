@@ -62,7 +62,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
                     using (var command = new OracleCommand("INSERT_MATERIAL", connection))
                     {
-                        // command.CommandType = CommandType.StoredProcedure; // Nastavení typu na uloženou proceduru
+                        command.CommandType = CommandType.StoredProcedure; // Nastavení typu na uloženou proceduru
                         command.Parameters.Add(new OracleParameter("nazev", material.Nazev));
                         command.ExecuteNonQuery();
                     }
@@ -76,17 +76,26 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         }
         public void AddZeme(Zeme zeme)
         {
-            using (var connection = new OracleConnection(_connectionString))
+            try
             {
-                connection.Open();
-                // var query = "INSERT INTO ZEME (ID_ZEME, NAZEV, STUPEN_NEBEZPECI) VALUES (S_ZEME.nextval, :nazev, :stupenNebezpeci)";
-
-                using (var command = new OracleCommand("INSERT_ZEME", connection))
+                using (var connection = new OracleConnection(_connectionString))
                 {
-                    command.Parameters.Add(new OracleParameter("nazev", zeme.Nazev));
-                    command.Parameters.Add(new OracleParameter("stupenNebezpeci", zeme.StupenNebezpeci));
-                    command.ExecuteNonQuery();
+                    connection.Open();
+
+                    using (var command = new OracleCommand("INSERT_ZEME", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new OracleParameter("p_nazev", zeme.Nazev));
+                        command.Parameters.Add(new OracleParameter("p_stupen_nebezpeci", zeme.StupenNebezpeci));
+                        command.ExecuteNonQuery();
+                    }
                 }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while adding Zeme: {ex.Message}");
+
             }
         }
 
@@ -149,9 +158,139 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
         }
 
+        public void AddObec(Obec obec)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("INSERT_OBCE", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Parametry odpovídající proceduře INSERT_OBCE
+                    command.Parameters.Add(new OracleParameter("p_nazev", obec.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_id_zeme", obec.IdZeme));
+
+                    // Proveď příkaz
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void AddMuzeum(Muzeum muzeum)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("INSERT_MUZEUM", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_nazev", muzeum.Nazev));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
 
 
         //GET METODY
+
+        public List<Muzeum> GetAllMuzea()
+        {
+            var muzeumList = new List<Muzeum>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT ID_MUZEUM, NAZEV FROM MUZEUM";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            muzeumList.Add(new Muzeum
+                            {
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return muzeumList;
+        }
+
+        public Muzeum GetMuzeumById(int id)
+        {
+            Muzeum muzeum = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT ID_MUZEUM, NAZEV FROM MUZEUM WHERE ID_MUZEUM = :Id";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("Id", id));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            muzeum = new Muzeum
+                            {
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return muzeum;
+        }
+
+
+
+
+        public List<Obec> GetAllObce()
+        {
+            var obceList = new List<Obec>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT O.ID_OBEC, O.NAZEV, Z.NAZEV AS ZEME_NAZEV
+            FROM OBEC O
+            LEFT JOIN ZEME Z ON O.ID_ZEME = Z.ID_ZEME";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            obceList.Add(new Obec
+                            {
+                                IdObec = reader.GetInt32(reader.GetOrdinal("ID_OBEC")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                ZemeNazev = reader.GetString(reader.GetOrdinal("ZEME_NAZEV"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return obceList;
+        }
+
+
         public List<Zeme> GetAllZeme()
         {
             var zemeList = new List<Zeme>();
@@ -237,6 +376,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             return materials;
 
         }
+
 
         public Material GetMaterialById(int id)
         {
@@ -873,6 +1013,45 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             return typ;
         }
 
+        public Obec GetObecById(int id)
+        {
+            Obec obec = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                var query = @"
+            SELECT 
+                ID_OBEC, 
+                NAZEV, 
+                ID_ZEME
+            FROM OBEC
+            WHERE ID_OBEC = :id";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("id", OracleDbType.Int32)).Value = id;
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            obec = new Obec
+                            {
+                                IdObec = reader.GetInt32(reader.GetOrdinal("ID_OBEC")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                IdZeme = reader.GetInt32(reader.GetOrdinal("ID_ZEME"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return obec;
+        }
+
+
         public Autor GetAutorById(int id)
         {
             Autor autor = null;
@@ -1058,6 +1237,26 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         }
 
         //UPDATE
+        public void UpdateObec(Obec obec)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_OBEC", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.Add(new OracleParameter("p_id_obec", obec.IdObec));
+                    command.Parameters.Add(new OracleParameter("p_nazev", obec.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_id_zeme", obec.IdZeme));
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
         public void UpdateZamestnanec(Zamestnanec zamestnanec)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -1145,9 +1344,10 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 using (var command = new OracleCommand("UPDATE_ZEME", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(new OracleParameter("nazev", zeme.Nazev));
-                    command.Parameters.Add(new OracleParameter("stupenNebezpeci", zeme.StupenNebezpeci));
-                    command.Parameters.Add(new OracleParameter("id", zeme.IdZeme));
+                    command.Parameters.Add(new OracleParameter("p_id_zeme", zeme.IdZeme));
+                    command.Parameters.Add(new OracleParameter("p_nazev", zeme.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_stupen_nebezpeci", zeme.StupenNebezpeci));
+                    
                     command.ExecuteNonQuery();
                 }
             }
@@ -1171,6 +1371,23 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 }
             }
         }
+
+        public void UpdateMuzeum(Muzeum muzeum)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_MUZEUM", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", muzeum.IdMuzeum));
+                    command.Parameters.Add(new OracleParameter("p_nazev", muzeum.Nazev));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
 
         //DELETE
         public void DeleteMaterial(int id)
@@ -1203,6 +1420,21 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 }
             }
         }
+        public void DeleteMuzeum(int id)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("DELETE_MUZEUM", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", id));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
 
         //pro systémový katalog
         public List<string> GetUserTables()

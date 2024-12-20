@@ -1,0 +1,13 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Muzeum
+
+<h2>Smazat muzeum</h2>
+
+<p>Opravdu chcete smazat muzeum s názvem: <strong>@Model.Nazev</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdMuzeum" />
+    <button type="submit" class="btn btn-danger">Ano, smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>
+
+

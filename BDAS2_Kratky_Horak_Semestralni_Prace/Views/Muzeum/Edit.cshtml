@@ -1,0 +1,15 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Muzeum
+
+<h2>Upravit muzeum</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="IdMuzeum" />
+    <div class="form-group">
+        <label for="Nazev">Název</label>
+        <input type="text" asp-for="Nazev" class="form-control" />
+        <span asp-validation-for="Nazev" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Uložit</button>
+    <a asp-action="Index" class="btn btn-secondary">Zpět</a>
+</form>
+

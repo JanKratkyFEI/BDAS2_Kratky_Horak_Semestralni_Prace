@@ -1,4 +1,6 @@
-﻿namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 {
     public class StavPredmetu
     {
@@ -11,6 +13,7 @@
         public DateTime KonecStav { get; set; }
 
         //navigační vlastnost pro spojeni s Predmety
+        [ValidateNever]
         public ICollection<Predmet> Predmety { get; set; }
 
     }

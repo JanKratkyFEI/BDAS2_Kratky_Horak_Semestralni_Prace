@@ -1,0 +1,20 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zeme
+
+<div class="container mt-4">
+    <h2>Upravit zemi</h2>
+    <form asp-controller="Zeme" asp-action="Edit" method="post">
+        <input type="hidden" asp-for="IdZeme" />
+        <div class="mb-3">
+            <label asp-for="Nazev" class="form-label">Název</label>
+            <input asp-for="Nazev" class="form-control" />
+            <span asp-validation-for="Nazev" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="StupenNebezpeci" class="form-label">Stupeň Nebezpečí</label>
+            <input asp-for="StupenNebezpeci" type="number" class="form-control" />
+            <span asp-validation-for="StupenNebezpeci" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Uložit změny</button>
+        <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+    </form>
+</div>
