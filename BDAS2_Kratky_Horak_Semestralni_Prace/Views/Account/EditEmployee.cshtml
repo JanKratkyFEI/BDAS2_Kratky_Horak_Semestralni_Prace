@@ -1,0 +1,45 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.ZamestnanecPoziceViewModel
+
+<h2>Upravit zaměstnance</h2>
+
+<form asp-controller="Account" asp-action="EditEmployee" method="post">
+    <input type="hidden" asp-for="IdZamestnanec" />
+
+    <div class="form-group">
+        <label asp-for="Plat"></label>
+        <input asp-for="Plat" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Role"></label>
+        <select asp-for="Role" class="form-control">
+            <option value="Registered">Registered</option>
+            <option value="User">User</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TypSmlouva"></label>
+        <select asp-for="TypSmlouva" class="form-control">
+            <option value="Plný úvazek">Plný úvazek</option>
+            <option value="Částečný úvazek">Částečný úvazek</option>
+            <option value="Brigáda">Brigáda</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Pozice"></label>
+        <input asp-for="Pozice" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IdOddeleni">Oddělení</label>
+        <select asp-for="IdOddeleni" asp-items="ViewBag.OddeleniList" class="form-control"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Uložit změny</button>
+    <a asp-action="Search" class="btn btn-secondary mt-3">Zpět</a>
+</form>
+

@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
-    public class MuzeumController : BaseController
+    public class OddeleniController : BaseController
     {
         private readonly OracleDatabaseHelper _connectionString;
 
-        public MuzeumController(OracleDatabaseHelper dbHelper)
+        public OddeleniController(OracleDatabaseHelper dbHelper)
         {
             _connectionString = dbHelper;
         }
@@ -15,64 +15,68 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var muzea = _connectionString.GetAllMuzea();
-            return View(muzea);
+            var oddeleni = _connectionString.GetAllOddeleni();
+            return View(oddeleni);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.MuzeumList = _connectionString.GetAllMuzea();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Muzeum muzeum)
+        public IActionResult Create(Oddeleni oddeleni)
         {
             if (ModelState.IsValid)
             {
-                _connectionString.AddMuzeum(muzeum);
+                _connectionString.AddOddeleni(oddeleni);
                 return RedirectToAction("Index");
             }
-            return View(muzeum);
+            ViewBag.MuzeumList = _connectionString.GetAllMuzea();
+            return View(oddeleni);
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var muzeum = _connectionString.GetMuzeumById(id);
-            if (muzeum == null)
+            var oddeleni = _connectionString.GetOddeleniById(id);
+            if (oddeleni == null)
             {
                 return NotFound();
             }
-            return View(muzeum);
+            ViewBag.MuzeumList = _connectionString.GetAllMuzea();
+            return View(oddeleni);
         }
 
         [HttpPost]
-        public IActionResult Edit(Muzeum muzeum)
+        public IActionResult Edit(Oddeleni oddeleni)
         {
             if (ModelState.IsValid)
             {
-                _connectionString.UpdateMuzeum(muzeum);
+                _connectionString.UpdateOddeleni(oddeleni);
                 return RedirectToAction("Index");
             }
-            return View(muzeum);
+            ViewBag.MuzeumList = _connectionString.GetAllMuzea();
+            return View(oddeleni);
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var muzeum = _connectionString.GetMuzeumById(id);
-            if (muzeum == null)
+            var oddeleni = _connectionString.GetOddeleniById(id);
+            if (oddeleni == null)
             {
                 return NotFound();
             }
-            return View(muzeum);
+            return View(oddeleni);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            _connectionString.DeleteMuzeum(id);
+            _connectionString.DeleteOddeleni(id);
             return RedirectToAction("Index");
         }
     }

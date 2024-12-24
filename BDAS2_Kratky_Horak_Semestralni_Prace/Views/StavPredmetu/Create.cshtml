@@ -1,0 +1,31 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.StavPredmetu>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Seznam Stavů Předmětů</h2>
+    <a asp-action="Create" class="btn btn-primary">Přidat nový stav</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Stav</th>
+            <th>Začátek stavu</th>
+            <th>Konec stavu</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stav in Model)
+        {
+            <tr>
+                <td>@stav.Stav</td>
+                <td>@stav.ZacatekStav.ToShortDateString()</td>
+                <td>@stav.KonecStav.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@stav.IdStav" class="btn btn-warning btn-sm">Upravit</a>
+                    <a asp-action="Delete" asp-route-id="@stav.IdStav" class="btn btn-danger btn-sm">Smazat</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

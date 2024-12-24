@@ -1,0 +1,19 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Sbirka
+
+<h2>Smazat Sbírku</h2>
+<p>Opravdu chcete smazat tuto sbírku?</p>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Nazev</h5>
+        <p class="card-text"><strong>Popis:</strong> @Model.Popis</p>
+        <p class="card-text"><strong>Muzeum:</strong> @Model.MuzeumNazev</p>
+    </div>
+</div>
+
+<form asp-controller="Sbirka" asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdSbirka" />
+    <button type="submit" class="btn btn-danger">Smazat</button>
+    <a asp-controller="Sbirka" asp-action="Index" class="btn btn-secondary">Zpět</a>
+</form>
+

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Adresa>
+
+<h2>Seznam Adres</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Adresa</h3>
+    <a asp-controller="Adresa" asp-action="Create" class="btn btn-primary">Přidat novou adresu</a>
+</div>
+
+<div class="scrollable">
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ulice</th>
+            <th>PSČ</th>
+            <th>Číslo popisné</th>
+            <th>Obec</th>
+            <th>Muzeum</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var adresa in Model)
+        {
+            <tr>
+                <td>@adresa.Ulice</td>
+                <td>@adresa.PSC</td>
+                <td>@adresa.CP</td>
+                <td>@adresa.ObecNazev</td>
+                <td>@adresa.MuzeumNazev</td>
+                <td>
+                    <a asp-controller="Adresa" asp-action="Edit" asp-route-id="@adresa.IdAdresa" class="btn btn-sm btn-warning">Upravit</a>
+                    <a asp-controller="Adresa" asp-action="Delete" asp-route-id="@adresa.IdAdresa" class="btn btn-sm btn-danger">Smazat</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

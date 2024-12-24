@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
-    public class MuzeumController : BaseController
+    public class StavPredmetuController : BaseController
     {
         private readonly OracleDatabaseHelper _connectionString;
 
-        public MuzeumController(OracleDatabaseHelper dbHelper)
+        public StavPredmetuController(OracleDatabaseHelper dbHelper)
         {
             _connectionString = dbHelper;
         }
@@ -15,8 +15,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var muzea = _connectionString.GetAllMuzea();
-            return View(muzea);
+            var stavy = _connectionString.GetAllStavyPredmetu();
+            return View(stavy);
         }
 
         [HttpGet]
@@ -26,53 +26,53 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Muzeum muzeum)
+        public IActionResult Create(StavPredmetu stav)
         {
             if (ModelState.IsValid)
             {
-                _connectionString.AddMuzeum(muzeum);
+                _connectionString.AddStavPredmetu(stav);
                 return RedirectToAction("Index");
             }
-            return View(muzeum);
+            return View(stav);
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var muzeum = _connectionString.GetMuzeumById(id);
-            if (muzeum == null)
+            var stav = _connectionString.GetStavPredmetuById(id);
+            if (stav == null)
             {
                 return NotFound();
             }
-            return View(muzeum);
+            return View(stav);
         }
 
         [HttpPost]
-        public IActionResult Edit(Muzeum muzeum)
+        public IActionResult Edit(StavPredmetu stav)
         {
             if (ModelState.IsValid)
             {
-                _connectionString.UpdateMuzeum(muzeum);
+                _connectionString.UpdateStavPredmetu(stav);
                 return RedirectToAction("Index");
             }
-            return View(muzeum);
+            return View(stav);
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var muzeum = _connectionString.GetMuzeumById(id);
-            if (muzeum == null)
+            var stav = _connectionString.GetStavPredmetuById(id);
+            if (stav == null)
             {
                 return NotFound();
             }
-            return View(muzeum);
+            return View(stav);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            _connectionString.DeleteMuzeum(id);
+            _connectionString.DeleteStavPredmetu(id);
             return RedirectToAction("Index");
         }
     }

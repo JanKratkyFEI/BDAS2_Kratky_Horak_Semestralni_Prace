@@ -22,6 +22,25 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         public string ConnectionString => _connectionString;
 
         //ADD METODY
+        public void AddAdresa(Adresa adresa)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("INSERT_ADRESA", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_ulice", adresa.Ulice));
+                    command.Parameters.Add(new OracleParameter("p_pcs", adresa.PSC));
+                    command.Parameters.Add(new OracleParameter("p_id_obec", adresa.IdObec));
+                    command.Parameters.Add(new OracleParameter("p_cp", adresa.CP));
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", adresa.IdMuzeum));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void AddZamestnanec(Zamestnanec zamestnanec)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -192,10 +211,152 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 }
             }
         }
+        public void AddStavPredmetu(StavPredmetu stav)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("INSERT_STAV", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_stav", stav.Stav));
+                    command.Parameters.Add(new OracleParameter("p_zacatek_stav", stav.ZacatekStav));
+                    command.Parameters.Add(new OracleParameter("p_konec_stav", stav.KonecStav));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void AddOddeleni(Oddeleni oddeleni)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("INSERT_ODDELENI", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_nazev", oddeleni.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", oddeleni.IdMuzeum));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void AddAutor(Autor autor)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("INSERT_AUTOR", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_jmeno", autor.Jmeno));
+                    command.Parameters.Add(new OracleParameter("p_prijmeni", autor.Prijmeni));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void AddSbirka(Sbirka sbirka)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("INSERT_SBIRKA", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_nazev", sbirka.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_popis", sbirka.Popis));
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", sbirka.IdMuzeum));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+
+
 
 
 
         //GET METODY
+        public List<Adresa> GetAllAdresa()
+        {
+            var adresaList = new List<Adresa>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT 
+                A.ID_ADRESA,
+                A.ULICE,
+                A.PSC,
+                A.CP,
+                A.ID_OBEC,
+                A.ID_MUZEUM, 
+                O.NAZEV AS OBEC_NAZEV,
+                M.NAZEV AS MUZEUM_NAZEV
+            FROM ADRESA A
+            LEFT JOIN OBEC O ON A.ID_OBEC = O.ID_OBEC
+            LEFT JOIN MUZEUM M ON A.ID_MUZEUM = M.ID_MUZEUM";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            adresaList.Add(new Adresa
+                            {
+                                IdAdresa = reader.GetInt32(reader.GetOrdinal("ID_ADRESA")),
+                                Ulice = reader.GetString(reader.GetOrdinal("ULICE")),
+                                PSC = reader.GetString(reader.GetOrdinal("PSC")),
+                                CP = reader.GetString(reader.GetOrdinal("CP")),
+                                IdObec = reader.GetInt32(reader.GetOrdinal("ID_OBEC")),
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM")),
+                                ObecNazev = reader.IsDBNull(reader.GetOrdinal("OBEC_NAZEV")) ? "Neznámá obec" : reader.GetString(reader.GetOrdinal("OBEC_NAZEV")),
+                                MuzeumNazev = reader.IsDBNull(reader.GetOrdinal("MUZEUM_NAZEV")) ? "Neznámé muzeum" : reader.GetString(reader.GetOrdinal("MUZEUM_NAZEV")),
+
+                            });
+                        }
+                    }
+                }
+            }
+
+            return adresaList;
+        }
+
+
+        public List<Autor> GetAllAutori()
+        {
+            var autorList = new List<Autor>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT ID_AUTOR, JMENO, PRIJMENI FROM AUTOR";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            autorList.Add(new Autor
+                            {
+                                IdAutor = reader.GetInt32(reader.GetOrdinal("ID_AUTOR")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return autorList;
+        }
 
         public List<Muzeum> GetAllMuzea()
         {
@@ -256,7 +417,68 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         }
 
 
+        public List<StavPredmetu> GetAllStavyPredmetu()
+        {
+            var stavyList = new List<StavPredmetu>();
 
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT ID_STAV, STAV, ZACATEK_STAV, KONEC_STAV FROM STAV_PREDMETU";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stavyList.Add(new StavPredmetu
+                            {
+                                IdStav = reader.GetInt32(reader.GetOrdinal("ID_STAV")),
+                                Stav = reader.GetString(reader.GetOrdinal("STAV")),
+                                ZacatekStav = reader.GetDateTime(reader.GetOrdinal("ZACATEK_STAV")),
+                                KonecStav = reader.GetDateTime(reader.GetOrdinal("KONEC_STAV"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return stavyList;
+        }
+
+        public List<Oddeleni> GetAllOddeleni()
+        {
+            var oddeleniList = new List<Oddeleni>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+        SELECT O.ID_ODDELENI, O.NAZEV, O.ID_MUZEUM, M.NAZEV AS NAZEV_MUZEUM
+        FROM ODDELENI O
+        LEFT JOIN MUZEUM M ON O.ID_MUZEUM = M.ID_MUZEUM";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            oddeleniList.Add(new Oddeleni
+                            {
+                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("ID_ODDELENI")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM")),
+                                MuzeumNazev = reader.GetString(reader.GetOrdinal("NAZEV_MUZEUM"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return oddeleniList;
+        }
 
         public List<Obec> GetAllObce()
         {
@@ -319,6 +541,42 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
             return zemeList;
         }
+
+        public List<Sbirka> GetAllSbirky()
+        {
+            var sbirky = new List<Sbirka>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+              
+                var query = @"
+            SELECT 
+                S.ID_SBIRKA, S.NAZEV, S.POPIS, M.NAZEV AS MUZEUM_NAZEV
+            FROM SBIRKA S
+            LEFT JOIN MUZEUM M ON S.ID_MUZEUM = M.ID_MUZEUM";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            sbirky.Add(new Sbirka
+                            {
+                                IdSbirka = reader.GetInt32(reader.GetOrdinal("ID_SBIRKA")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                Popis = reader.IsDBNull(reader.GetOrdinal("POPIS")) ? null : reader.GetString(reader.GetOrdinal("POPIS")),
+                                MuzeumNazev = reader.GetString(reader.GetOrdinal("MUZEUM_NAZEV"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return sbirky;
+        }
+
         public Zeme GetZemeById(int id)
         {
             Zeme zeme = null;
@@ -375,6 +633,39 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
             return materials;
 
+        }
+
+
+        public StavPredmetu GetStavPredmetuById(int id)
+        {
+            StavPredmetu stav = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT ID_STAV, STAV, ZACATEK_STAV, KONEC_STAV FROM STAV_PREDMETU WHERE ID_STAV = :Id";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("Id", id));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            stav = new StavPredmetu
+                            {
+                                IdStav = reader.GetInt32(reader.GetOrdinal("ID_STAV")),
+                                Stav = reader.GetString(reader.GetOrdinal("STAV")),
+                                ZacatekStav = reader.GetDateTime(reader.GetOrdinal("ZACATEK_STAV")),
+                                KonecStav = reader.GetDateTime(reader.GetOrdinal("KONEC_STAV"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return stav;
         }
 
 
@@ -515,6 +806,61 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
             return predmety;
         }
+
+        public List<Zamestnanec> SearchEmployeees(string searchQuery)
+        {
+            var result = new List<Zamestnanec>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+ SELECT 
+     ID_ZAMESTNANEC, JMENO, PRIJMENI, EMAIL, TELEFON, POZICE, ROLE,
+     NAZEV_ADRESY, NAZEV_ODDELENI, RODNE_CISLO, DATUM_ZAMESTNANI, 
+     TYP_SMLOUVA, PLAT, POHLAVI
+ FROM ZAMESTNANEC_PRIVACY_VIEW
+ WHERE LOWER(JMENO) LIKE '%' || :SearchQuery || '%'
+    OR LOWER(PRIJMENI) LIKE '%' || :SearchQuery || '%'";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add("SearchQuery", OracleDbType.Varchar2).Value = (searchQuery ?? string.Empty).ToLower();
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var idZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC"));
+                            var profilePicturePath = $"/images/profile_pictures/{idZamestnanec}.jpg";
+
+                            result.Add(new Zamestnanec
+                            {
+                                IdZamestnanec = idZamestnanec,
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Email = reader.GetString(reader.GetOrdinal("EMAIL")),
+                                Telefon = reader.GetString(reader.GetOrdinal("TELEFON")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                Role = reader.GetString(reader.GetOrdinal("ROLE")),
+                                AdresaText = reader.GetString(reader.GetOrdinal("NAZEV_ADRESY")),
+                                OddeleniText = reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI")),
+                                RodCislo = reader.GetString(reader.GetOrdinal("RODNE_CISLO")),
+                                DatumZamestnani = reader.GetDateTime(reader.GetOrdinal("DATUM_ZAMESTNANI")),
+                                TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
+                                Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
+                                ProfilePictureUrl = System.IO.File.Exists(Path.Combine("wwwroot", profilePicturePath))
+                                    ? profilePicturePath
+                                    : "/images/default_pfp.jpg" // Výchozí obrázek
+                            });
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
 
         public List<Zamestnanec> SearchZamestnanci(string searchQuery)
         {
@@ -721,6 +1067,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             {
                 connection.Open();
                 var query = @"
+SELECT
                 ID_ZAMESTNANEC, POZICE, JMENO, PRIJMENI, EMAIL, TELEFON, 
                 RODNE_CISLO, DATUM_ZAMESTNANI, TYP_SMLOUVA, PLAT, POHLAVI, 
                 ID_ADRESA, ID_ODDELENI, ID_REC_ZAMESTNANEC, USERNAME, PASSWORD, ROLE
@@ -987,6 +1334,43 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
         }
 
+        public Sbirka GetSbirkaById(int id)
+        {
+            Sbirka sbirka = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT 
+                S.ID_SBIRKA, S.NAZEV, S.POPIS, S.ID_MUZEUM, M.NAZEV AS NAZEV_MUZEUM
+            FROM SBIRKA S
+            LEFT JOIN MUZEUM M ON S.ID_MUZEUM = M.ID_MUZEUM
+            WHERE S.ID_SBIRKA = :id";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("id", id));
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            sbirka = new Sbirka
+                            {
+                                IdSbirka = reader.GetInt32(reader.GetOrdinal("ID_SBIRKA")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                Popis = reader.IsDBNull(reader.GetOrdinal("POPIS")) ? null : reader.GetString(reader.GetOrdinal("POPIS")),
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM")),
+                                MuzeumNazev = reader.GetString(reader.GetOrdinal("NAZEV_MUZEUM"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return sbirka;
+        }
+
 
         public string GetPredmetTypeById(int id)
         {
@@ -1059,7 +1443,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                var query = "SELECT IdAutor, Jmeno, Prijmeni FROM Autor WHERE IdAutor = :id";
+                var query = "SELECT ID_AUTOR, JMENO, PRIJMENI FROM Autor WHERE ID_AUTOR = :id";
                 using (var command = new OracleCommand(query, connection))
                 {
                     command.Parameters.Add(new OracleParameter("id", id));
@@ -1069,9 +1453,9 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                         {
                             autor = new Autor
                             {
-                                IdAutor = reader.GetInt32(reader.GetOrdinal("IdAutor")),
-                                Jmeno = reader.GetString(reader.GetOrdinal("Jmeno")),
-                                Prijmeni = reader.GetString(reader.GetOrdinal("Prijmeni"))
+                                IdAutor = reader.GetInt32(reader.GetOrdinal("ID_AUTOR")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI"))
                             };
                         }
                     }
@@ -1087,7 +1471,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                var query = "SELECT IdAdresa, Ulice, PSC, IdObec, CP, IdMuzeum FROM Adresa WHERE IdAdresa = :id";
+                var query = "SELECT ID_ADRESA, ULICE, PSC, ID_OBEC, CP, ID_MUZEUM FROM ADRESA WHERE ID_ADRESA = :id";
 
                 using (var command = new OracleCommand(query, connection))
                 {
@@ -1099,12 +1483,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                         {
                             adresa = new Adresa
                             {
-                                IdAdresa = reader.GetInt32(reader.GetOrdinal("IdAdresa")),
-                                Ulice = reader.GetString(reader.GetOrdinal("Ulice")),
+                                IdAdresa = reader.GetInt32(reader.GetOrdinal("ID_ADRESA")),
+                                Ulice = reader.GetString(reader.GetOrdinal("ULICE")),
                                 PSC = reader.GetString(reader.GetOrdinal("PSC")),
-                                IdObec = reader.GetInt32(reader.GetOrdinal("IdObec")),
+                                IdObec = reader.GetInt32(reader.GetOrdinal("ID_OBEC")),
                                 CP = reader.GetString(reader.GetOrdinal("CP")),
-                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("IdMuzeum"))
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM"))
                             };
                         }
                     }
@@ -1113,6 +1497,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
             return adresa;
         }
+
 
         public Fotografie GetFotografieById(int id)
         {
@@ -1235,8 +1620,81 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             }
             return socha;
         }
+        public Oddeleni GetOddeleniById(int id)
+        {
+            Oddeleni oddeleni = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+        SELECT O.ID_ODDELENI, O.NAZEV, O.ID_MUZEUM, M.NAZEV AS NAZEV_MUZEUM
+        FROM ODDELENI O
+        LEFT JOIN MUZEUM M ON O.ID_MUZEUM = M.ID_MUZEUM
+        WHERE O.ID_ODDELENI = :Id";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("Id", id));
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            oddeleni = new Oddeleni
+                            {
+                                IdOddeleni = reader.GetInt32(reader.GetOrdinal("ID_ODDELENI")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                IdMuzeum = reader.GetInt32(reader.GetOrdinal("ID_MUZEUM")),
+                                MuzeumNazev = reader.GetString(reader.GetOrdinal("NAZEV_MUZEUM"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return oddeleni;
+        }
+
 
         //UPDATE
+        public void UpdateAdresa(Adresa adresa)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_ADRESA", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_adresa", adresa.IdAdresa));
+                    command.Parameters.Add(new OracleParameter("p_ulice", adresa.Ulice));
+                    command.Parameters.Add(new OracleParameter("p_psc", adresa.PSC));
+                    command.Parameters.Add(new OracleParameter("p_id_obec", adresa.IdObec));
+                    command.Parameters.Add(new OracleParameter("p_cp", adresa.CP));
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", adresa.IdMuzeum));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateOddeleni(Oddeleni oddeleni)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_ODDELENI", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_oddeleni", oddeleni.IdOddeleni));
+                    command.Parameters.Add(new OracleParameter("p_nazev", oddeleni.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", oddeleni.IdMuzeum));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void UpdateObec(Obec obec)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -1264,7 +1722,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 connection.Open();
 
 
-                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_ZAMESTNANEC", connection))
+                using (var command = new OracleCommand("UPDATE_ZAMESTNANEC", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.Add("p_IdZamestnanec", OracleDbType.Int32).Value = zamestnanec.IdZamestnanec;
@@ -1387,9 +1845,147 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 }
             }
         }
+        public void UpdateStavPredmetu(StavPredmetu stav)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_STAV", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_stav", stav.IdStav));
+                    command.Parameters.Add(new OracleParameter("p_stav", stav.Stav));
+                    command.Parameters.Add(new OracleParameter("p_zacatek_stav", stav.ZacatekStav));
+                    command.Parameters.Add(new OracleParameter("p_konec_stav", stav.KonecStav));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void UpdateAutor(Autor autor)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_AUTOR", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_autor", autor.IdAutor));
+                    command.Parameters.Add(new OracleParameter("p_jmeno", autor.Jmeno));
+                    command.Parameters.Add(new OracleParameter("p_prijmeni", autor.Prijmeni));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateSbirka(Sbirka sbirka)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("UPDATE_SBIRKA", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_sbirka", sbirka.IdSbirka));
+                    command.Parameters.Add(new OracleParameter("p_nazev", sbirka.Nazev));
+                    command.Parameters.Add(new OracleParameter("p_popis", sbirka.Popis));
+                    command.Parameters.Add(new OracleParameter("p_id_muzeum", sbirka.IdMuzeum));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateZamestnanecOsobniUdaje(ZamestnanecOsobniViewModel zamestnanec)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_ZAMESTNANEC_OSOBNI_UDAJE", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("p_id_zamestnanec", OracleDbType.Int32).Value = zamestnanec.IdZamestnanec;
+                    command.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
+                    command.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
+                    command.Parameters.Add("p_email", OracleDbType.Varchar2).Value = zamestnanec.Email;
+                    command.Parameters.Add("p_telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon;
+                    command.Parameters.Add("p_pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi;
+                    command.Parameters.Add("p_id_adresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        public void UpdateEmployeeDetails(ZamestnanecPoziceViewModel zamestnanec)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("UPDATE_BALICEK.update_zamestnanec_pozice", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_zamestnanec", zamestnanec.IdZamestnanec));
+                    command.Parameters.Add(new OracleParameter("p_plat", zamestnanec.Plat));
+                    command.Parameters.Add(new OracleParameter("p_role", zamestnanec.Role));
+                    command.Parameters.Add(new OracleParameter("p_typ_smlouva", zamestnanec.TypSmlouva));
+                    command.Parameters.Add(new OracleParameter("p_pozice", zamestnanec.Pozice));
+                    command.Parameters.Add(new OracleParameter("p_id_oddeleni", zamestnanec.IdOddeleni));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void ProfilePicture(string username, string pictureUrl)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("UPDATE_BALICEK.update_profile_picture", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_username", username));
+                    command.Parameters.Add(new OracleParameter("p_picture_url", pictureUrl));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
 
 
         //DELETE
+        public void DeleteAutor(int id)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("DELETE_AUTOR", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_autor", id));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteOddeleni(int id)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("DELETE_ODDELENI", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_oddeleni", id));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void DeleteMaterial(int id)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -1434,6 +2030,21 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 }
             }
         }
+        public void DeleteStavPredmetu(int id)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("DELETE_STAV", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new OracleParameter("p_id_stav", id));
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
 
 
         //pro systémový katalog

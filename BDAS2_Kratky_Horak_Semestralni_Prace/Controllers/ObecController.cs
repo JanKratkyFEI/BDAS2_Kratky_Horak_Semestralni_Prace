@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
 
-    public class ObecController : Controller
+    public class ObecController : BaseController
     {
         private readonly OracleDatabaseHelper _connectionString;
 

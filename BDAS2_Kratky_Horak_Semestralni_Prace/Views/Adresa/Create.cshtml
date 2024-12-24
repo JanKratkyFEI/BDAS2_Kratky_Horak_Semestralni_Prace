@@ -1,0 +1,38 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Adresa
+
+<h2>Přidat novou adresu</h2>
+
+<form asp-controller="Adresa" asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Ulice">Ulice</label>
+        <input type="text" class="form-control" id="Ulice" name="Ulice" asp-for="Ulice" required />
+    </div>
+    <div class="form-group">
+        <label for="PSC">PSČ</label>
+        <input type="text" class="form-control" id="PSC" name="PSC" asp-for="PSC" required />
+    </div>
+    <div class="form-group">
+        <label for="CP">Číslo popisné</label>
+        <input type="number" class="form-control" id="CP" name="CP" asp-for="CP" required />
+    </div>
+    <div class="form-group">
+        <label for="IdObec">Obec</label>
+        <select class="form-control" id="IdObec" name="IdObec" asp-for="IdObec">
+            @foreach (var obec in ViewBag.Obce)
+            {
+                <option value="@obec.IdObec">@obec.Nazev</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="IdMuzeum">Muzeum</label>
+        <select class="form-control" id="IdMuzeum" name="IdMuzeum" asp-for="IdMuzeum">
+            @foreach (var muzeum in ViewBag.Muzea)
+            {
+                <option value="@muzeum.IdMuzeum">@muzeum.Nazev</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Přidat</button>
+</form>
+

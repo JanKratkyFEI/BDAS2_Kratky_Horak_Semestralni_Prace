@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
     
-    public class MaterialController : Controller
+    public class MaterialController : BaseController
     {
 
         private readonly OracleDatabaseHelper _connectionString;

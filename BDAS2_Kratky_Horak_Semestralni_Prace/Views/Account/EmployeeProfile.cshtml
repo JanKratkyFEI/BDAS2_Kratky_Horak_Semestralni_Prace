@@ -1,4 +1,5 @@
 ﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zamestnanec
+@inject IHttpContextAccessor HttpContextAccessor
 
 <div class="container mt-4">
     <h2>Profil zaměstnance</h2>
@@ -27,6 +28,12 @@
 
 <div class="mt-4">
     <a asp-action="Search" class="btn btn-secondary">Zpět na vyhledávání</a>
+
+    <!-- nastavení pracomocí (role) může jenom admin-->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Admin")
+    {
+        <a asp-action="EditEmployee" asp-route-id="@Model.IdZamestnanec" class="btn btn-primary">Upravit</a>
+    }
 </div>
 
 

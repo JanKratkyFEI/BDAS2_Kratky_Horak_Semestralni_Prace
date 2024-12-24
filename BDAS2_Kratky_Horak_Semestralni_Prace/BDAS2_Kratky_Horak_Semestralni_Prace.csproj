@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\DB\Materialy\" />
+    <Folder Include="wwwroot\images\profile_pictures\" />
   </ItemGroup>
 
 </Project>

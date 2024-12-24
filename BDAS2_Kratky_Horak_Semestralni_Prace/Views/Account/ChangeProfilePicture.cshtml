@@ -1,0 +1,13 @@
+﻿<h2>Změnit profilový obrázek</h2>
+
+<form asp-action="ChangeProfilePicture" asp-controller="Account" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="profilePicture">Vyberte nový profilový obrázek</label>
+        <input type="file" class="form-control" id="profilePicture" name="profilePicture" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Nahrát</button>
+    <a asp-action="Profile" class="btn btn-secondary mt-3">Zpět</a>
+
+</form>
+
+

@@ -1,4 +1,6 @@
-﻿namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 {
     public class Autor
     {
@@ -10,6 +12,7 @@
         public string Prijmeni { get; set; }
 
         //Navigační vlastnosti
+        [ValidateNever]
         public ICollection<AutorPredmet> AutorPredmety { get; set; } //Relace mnoho-na-mnoho s předměty
     }
 }

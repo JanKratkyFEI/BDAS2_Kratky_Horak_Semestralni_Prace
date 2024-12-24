@@ -1,0 +1,19 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Adresa
+
+<h2>Odstranit adresu</h2>
+<p>Opravdu chcete odstranit tuto adresu?</p>
+
+<div>
+    <p><strong>Ulice:</strong> @Model.Ulice</p>
+    <p><strong>PSČ:</strong> @Model.PSC</p>
+    <p><strong>Číslo popisné:</strong> @Model.CP</p>
+    <p><strong>Obec:</strong> @Model.ObecNazev</p>
+    <p><strong>Muzeum:</strong> @Model.MuzeumNazev</p>
+</div>
+
+<form asp-controller="Adresa" asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdAdresa" />
+    <button type="submit" class="btn btn-danger">Ano, odstranit</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>
+

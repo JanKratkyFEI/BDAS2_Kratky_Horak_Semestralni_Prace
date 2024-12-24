@@ -1,0 +1,30 @@
+﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Autor>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Seznam Autorů</h2>
+    <a asp-action="Create" class="btn btn-primary">Přidat nového autora</a>
+</div>
+<div class="scrollable">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Jméno</th>
+            <th>Příjmení</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var autor in Model)
+        {
+            <tr>
+                <td>@autor.Jmeno</td>
+                <td>@autor.Prijmeni</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@autor.IdAutor" class="btn btn-warning btn-sm">Upravit</a>
+                    <a asp-action="Delete" asp-route-id="@autor.IdAutor" class="btn btn-danger btn-sm">Smazat</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

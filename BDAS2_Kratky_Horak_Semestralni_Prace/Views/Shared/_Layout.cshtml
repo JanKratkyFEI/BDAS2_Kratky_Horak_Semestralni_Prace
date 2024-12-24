@@ -33,12 +33,17 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="tablesDropdown">
                                     <li><a class="dropdown-item" asp-controller="DB" asp-action="Zamestnanci">Zaměstnanci</a></li>
-                                    <li><a class="dropdown-item" asp-controller="DB" asp-action="Adresy">Adresy</a></li>
-                                    <li><a class="dropdown-item" asp-controller="DB" asp-action="Oddeleni">Oddělení</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Adresa" asp-action="Index">Adresy</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Oddeleni" asp-action="Oddeleni">Oddělení</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Sbirka" asp-action="Index">Sbírky</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Autor" asp-action="Index">Autoři</a></li>
                                     <li><a class="dropdown-item" asp-controller="Material" asp-action="Index">Materiály</a></li>
                                     <li><a class="dropdown-item" asp-controller="Zeme" asp-action="Index">Země</a></li>
                                     <li><a class="dropdown-item" asp-controller="Obec" asp-action="Index">Obce</a></li>
                                     <li><a class="dropdown-item" asp-controller="Muzeum" asp-action="Index">Muzea</a></li>
+                                    <li><a class="dropdown-item" asp-controller="StavPredmetu" asp-action="Index">Stavy</a></li>
+                                    
+
                                 </ul>
                             </li>
                         }
@@ -52,7 +57,9 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Můj profil</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Settings">Nastavení</a></li>
+                                    
+
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile">Nastavení</a></li>
                                     <li><a class="dropdown-item" asp-controller="DB" asp-action="SearchEmploy">Najít zaměstnance</a></li>
                                 </ul>
                             </li>
@@ -85,8 +92,55 @@
     </div>
 
     <footer class="border-top footer text-muted bg-dark text-center text-white py-3">
+        <div class="role-emulation-form"> 
         <div class="container">
+
+            @if (ViewData["OriginalRole"]?.ToString() == "Admin")
+            {
+                <form asp-controller="Account" asp-action="EmulateRole" method="post" class="role-emulation-form">
+                    <label for="emulateRole">Emulovat roli:</label>
+                        <select name="emulateRole" id="emulateRole" class="form-control" onchange="this.form.submit();">
+                            @if (ViewData["EmulatedRole"]?.ToString() == "Admin")
+                            {
+                                <option value="Admin" selected="selected">Admin</option>
+                            }
+                            else
+                            {
+                                <option value="Admin">Admin</option>
+                            }
+                            @if (ViewData["EmulatedRole"]?.ToString() == "Manager")
+                            {
+                                <option value="Manager" selected="selected">Manager</option>
+                            }
+                            else
+                            {
+                                <option value="Manager">Manager</option>
+                            }
+                            @if (ViewData["EmulatedRole"]?.ToString() == "Registered")
+                            {
+                                <option value="Registered" selected="selected">Registered</option>
+                            }
+                            else
+                            {
+                                <option value="Registered">Registered</option>
+                            }
+                            @if (ViewData["EmulatedRole"]?.ToString() == "User")
+                            {
+                                <option value="User" selected="selected">User</option>
+                            }
+                            else
+                            {
+                                <option value="User">User</option>
+                            }
+                        </select>
+
+                </form>
+            }
+
+
             &copy; 2024 - Muzejní Databáze | <a class="text-light" asp-controller="Home" asp-action="Privacy">Ochrana údajů</a>
+
+        </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

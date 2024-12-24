@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
-    public class MuzeumController : BaseController
+    public class AutorController : BaseController
     {
         private readonly OracleDatabaseHelper _connectionString;
 
-        public MuzeumController(OracleDatabaseHelper dbHelper)
+        public AutorController(OracleDatabaseHelper dbHelper)
         {
             _connectionString = dbHelper;
         }
@@ -15,8 +15,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var muzea = _connectionString.GetAllMuzea();
-            return View(muzea);
+            var autori = _connectionString.GetAllAutori();
+            return View(autori);
         }
 
         [HttpGet]
@@ -26,53 +26,53 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Muzeum muzeum)
+        public IActionResult Create(Autor autor)
         {
             if (ModelState.IsValid)
             {
-                _connectionString.AddMuzeum(muzeum);
+                _connectionString.AddAutor(autor);
                 return RedirectToAction("Index");
             }
-            return View(muzeum);
+            return View(autor);
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var muzeum = _connectionString.GetMuzeumById(id);
-            if (muzeum == null)
+            var autor = _connectionString.GetAutorById(id);
+            if (autor == null)
             {
                 return NotFound();
             }
-            return View(muzeum);
+            return View(autor);
         }
 
         [HttpPost]
-        public IActionResult Edit(Muzeum muzeum)
+        public IActionResult Edit(Autor autor)
         {
             if (ModelState.IsValid)
             {
-                _connectionString.UpdateMuzeum(muzeum);
+                _connectionString.UpdateAutor(autor);
                 return RedirectToAction("Index");
             }
-            return View(muzeum);
+            return View(autor);
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var muzeum = _connectionString.GetMuzeumById(id);
-            if (muzeum == null)
+            var autor = _connectionString.GetAutorById(id);
+            if (autor == null)
             {
                 return NotFound();
             }
-            return View(muzeum);
+            return View(autor);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            _connectionString.DeleteMuzeum(id);
+            _connectionString.DeleteAutor(id);
             return RedirectToAction("Index");
         }
     }

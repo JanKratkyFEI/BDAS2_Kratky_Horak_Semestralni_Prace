@@ -1,0 +1,12 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Autor
+
+<h2>Smazat autora</h2>
+
+<p>Opravdu chcete smazat autora: <strong>@Model.Jmeno @Model.Prijmeni</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdAutor" />
+    <button type="submit" class="btn btn-danger">Ano, smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>
+

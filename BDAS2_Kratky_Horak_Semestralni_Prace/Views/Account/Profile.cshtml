@@ -4,7 +4,9 @@
     <h2>Můj Profil</h2>
     <div class="row">
         <div class="col-md-3">
-            <img src="@(Model.ProfilePictureUrl ?? "/images/default_pfp.jpg")" class="img-thumbnail" alt="Profilová fotka" style="width: 50%;" />
+            
+            <img src="@Model.ProfilePictureUrl" class="img-thumbnail" alt="Profilová fotka" style="width: 50%;" />
+
         </div>
         <!-- detaily-->
         <div class="col-md-9">
@@ -23,8 +25,8 @@
             <p><strong>Oddělení:</strong> @Model.OddeleniText</p>
 
 
-            <a asp-action="EditProfile" class="btn btn-primary">Změnit údaje</a>
-            <a asp-action="Settings" class="btn btn-secondary">Nastavení</a>
+            <a asp-action="EditProfile" asp-controller="Account" class="btn btn-primary">Změnit údaje</a>
+            <a asp-action="ChangeProfilePicture" class="btn btn-secondary">Změnit Profilový obrázek</a>
         </div>
     </div>
 </div>

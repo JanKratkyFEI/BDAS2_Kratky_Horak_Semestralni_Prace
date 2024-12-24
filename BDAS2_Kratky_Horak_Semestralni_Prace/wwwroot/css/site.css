@@ -75,6 +75,13 @@ footer {
     text-align: center;
 }
 
+footer .role-emulation-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
     footer a {
         color: #ffc107;
     }
@@ -94,4 +101,9 @@ footer {
     border: 1px solid #ddd;
     padding: 10px;
     background-color: #f9f9f9;
+}
+
+.role-emulation-form {
+    margin-top: 20px;
+    text-align: center;
 }

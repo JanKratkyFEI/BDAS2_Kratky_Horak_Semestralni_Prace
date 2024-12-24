@@ -1,0 +1,11 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.StavPredmetu
+
+<h2>Smazat stav</h2>
+
+<p>Opravdu chcete smazat stav: <strong>@Model.Stav</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdStav" />
+    <button type="submit" class="btn btn-danger">Ano, smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>

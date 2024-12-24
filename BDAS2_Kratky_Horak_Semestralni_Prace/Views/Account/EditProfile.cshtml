@@ -1,0 +1,40 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.ZamestnanecOsobniViewModel
+
+<h2>Upravit profil</h2>
+
+<form asp-controller="Account" asp-action="EditProfile" method="post">
+    <input type="hidden" asp-for="IdZamestnanec" />
+    <div class="form-group">
+        <label asp-for="Jmeno"></label>
+        <input asp-for="Jmeno" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Prijmeni"></label>
+        <input asp-for="Prijmeni" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Telefon"></label>
+        <input asp-for="Telefon" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Pohlavi"></label>
+        <input asp-for="Pohlavi" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IdAdresa">Adresa</label>
+        <select asp-for="IdAdresa" class="form-control" asp-items="ViewBag.AdresyList"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Uložit změny</button>
+    <a asp-action="Profile" class="btn btn-secondary mt-3">Zpět</a>
+</form>
+

@@ -26,26 +26,4 @@
 <!-- Odkazy na registraci a aktivaci účtu -->
 <div style="margin-top: 20px;">
     <p>Nemáte účet? <a asp-action="Register" asp-controller="Account">Zaregistrujte se</a>.</p>
-    <p>Jste zaměstnanec, ale nemáte přihlašovací údaje? <a asp-action="Activate" asp-controller="Account">Aktivujte svůj účet</a>.</p>
 </div>
-@* @{
-    ViewData["Title"] = "Přihlášení";
-}
-
-<h2>Přihlášení</h2>
-
-<form method="post" asp-controller="Account" asp-action="Login">
-    <div>
-        <label>Uživatelské jméno:</label>
-        <input type="text" name="username" required />
-    </div>
-    <div>
-        <label>Heslo:</label>
-        <input type="password" name="password" required />
-    </div>
-    <button type="submit">Přihlásit se</button>
-</form>
-@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-{
-    <p style="color:red;">@ViewBag.ErrorMessage</p>
-} *@

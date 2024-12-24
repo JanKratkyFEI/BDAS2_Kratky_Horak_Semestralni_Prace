@@ -1,0 +1,12 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Oddeleni
+
+<h2>Smazat oddělení</h2>
+
+<p>Opravdu chcete smazat oddělení: <strong>@Model.Nazev</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdOddeleni" />
+    <button type="submit" class="btn btn-danger">Ano, smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>
+

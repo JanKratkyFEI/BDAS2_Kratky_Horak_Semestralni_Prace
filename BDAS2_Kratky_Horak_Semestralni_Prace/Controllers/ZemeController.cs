@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
-    public class ZemeController : Controller
+    public class ZemeController : BaseController
     {
         private readonly OracleDatabaseHelper _connectionString;
 

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
-    public class DBController : Controller
+    public class DBController : BaseController
     {
         private readonly OracleDatabaseHelper _connectionString;
 
@@ -207,7 +207,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult SearchEmploy(string searchQuery)
         {
-            var zamestnanci = _connectionString.SearchZamestnanci(searchQuery);
+            var zamestnanci = _connectionString.SearchEmployeees(searchQuery);
             return View(zamestnanci);
         }
 
