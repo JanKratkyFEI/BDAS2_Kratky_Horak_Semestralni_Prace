@@ -110,6 +110,32 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public IActionResult Delete (int id)
+        {
+            var predmet = _connectionString.GetAdresaById(id);
+            if (predmet == null)
+            {
+                return NotFound("Předmět nalezen.");
+            }
+
+            return View(predmet);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            try
+            {
+                _connectionString.DeleteAdresa(id);
+                return RedirectToAction("Index");
+            }
+            catch( Exception ex)
+            {
+                ModelState.AddModelError("", $"Chyba při mazání adres: {ex.Message}");
+                return RedirectToAction("Delete", new { id = id });
+            }
+        }
     }
 }
 

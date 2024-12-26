@@ -1,4 +1,6 @@
-﻿namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 {
     public class Predmet
     {
@@ -14,12 +16,23 @@
         public int IdSbirka { get; set; } //Každý předmět patří do sbírky
         public int IdStav { get; set; } //Předmět má jeden stav
 
+
+        //pro čitelnost ve view
+        [ValidateNever]
+        public string SbirkaNazev { get; set; }
+        [ValidateNever]
+        public string StavNazev { get; set; }
+
         //navigační vlastnosti pro relace
-        public Sbirka Sbirka { get; set; } 
+        [ValidateNever]
+        public Sbirka Sbirka { get; set; }
+        [ValidateNever]
         public StavPredmetu StavPredmetu { get; set; }
 
         //Relace
+        [ValidateNever]
         public ICollection<AutorPredmet> AutorPredmety { get; set; }
+        [ValidateNever]
         public ICollection<PredmetMaterial> PredmetMaterialy { get; set; }
 
     }

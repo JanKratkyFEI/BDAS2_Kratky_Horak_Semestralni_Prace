@@ -1,0 +1,19 @@
+﻿@model Predmet
+
+<h2>Smazat předmět</h2>
+
+<p>Opravdu chcete smazat tento předmět?</p>
+
+<ul>
+    <li><strong>Název:</strong> @Model.Nazev</li>
+    <li><strong>Typ:</strong> @Model.Typ</li>
+    <li><strong>Popis:</strong> @Model.Popis</li>
+</ul>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.IdPredmet" />
+    <input type="hidden" name="typ" value="@Model.Typ" />
+    <button type="submit" class="btn btn-danger">Smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>
+

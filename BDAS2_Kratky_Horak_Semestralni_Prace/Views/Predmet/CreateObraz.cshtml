@@ -1,0 +1,52 @@
+﻿@model Obraz
+
+<h2>Vytvořit obraz</h2>
+
+<div class="scrollable">
+    <!-- Formulář -->
+    <form asp-action="CreateObraz" method="post">
+        <div class="form-group">
+            <label asp-for="Nazev"></label>
+            <input asp-for="Nazev" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Stari"></label>
+            <input asp-for="Stari" class="form-control" type="number" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Popis"></label>
+            <textarea asp-for="Popis" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="IdStav">Stav</label>
+            <select asp-for="IdStav" class="form-control" asp-items="ViewBag.Stavy">
+                <option value="">-- Vyberte stav --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="IdSbirka">Sbírka</label>
+            <select asp-for="IdSbirka" class="form-control" asp-items="ViewBag.Sbirky">
+                <option value="">-- Vyberte sbírku --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="UmeleckyStyl"></label>
+            <input asp-for="UmeleckyStyl" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Medium"></label>
+            <input asp-for="Medium" class="form-control" />
+        </div>
+
+        <!-- Typ - zobrazený ale disabled -->
+        <div class="form-group">
+            <label asp-for="Typ">Typ</label>
+            <input asp-for="Typ" class="form-control" value="O" disabled />
+            <!-- Skryté pole pro přenos hodnoty Typ -->
+            <input asp-for="Typ" type="hidden" value="O" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Vytvořit</button>
+        <a asp-action="Index" class="btn btn-secondary">Zpět</a>
+    </form>
+</div>

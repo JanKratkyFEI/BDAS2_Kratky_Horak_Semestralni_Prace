@@ -1,0 +1,84 @@
+﻿@model Predmet
+
+<h2>Vytvořit předmět</h2>
+
+<form asp-controller="Predmet" asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Nazev"></label>
+        <input asp-for="Nazev" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Stari"></label>
+        <input asp-for="Stari" class="form-control" type="number" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Popis"></label>
+        <textarea asp-for="Popis" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="Typ">Typ</label>
+        <select id="Typ" name="Typ" class="form-control" required onchange="toggleFields()">
+            <option value="O">Obraz</option>
+            <option value="F">Fotografie</option>
+            <option value="S">Socha</option>
+        </select>
+    </div>
+
+    <!-- Specifická pole pro Obraz -->
+    <div id="ObrazFields" class="subtype-fields" style="display: none;">
+        <div class="form-group">
+            <label for="UmeleckyStyl">Umělecký styl</label>
+            <input name="UmeleckyStyl" id="UmeleckyStyl" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="Medium">Médium</label>
+            <input name="Medium" id="Medium" class="form-control" />
+        </div>
+    </div>
+
+    <!-- Specifická pole pro Fotografie -->
+    <div id="FotografieFields" class="subtype-fields" style="display: none;">
+        <div class="form-group">
+            <label for="Zanr">Žánr</label>
+            <input name="Zanr" id="Zanr" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="Licence">Licence</label>
+            <input name="Licence" id="Licence" class="form-control" />
+        </div>
+    </div>
+
+    <!-- Specifická pole pro Socha -->
+    <div id="SochaFields" class="subtype-fields" style="display: none;">
+        <div class="form-group">
+            <label for="Vaha">Váha</label>
+            <input name="Vaha" id="Vaha" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="TechnikaTvorby">Technika tvorby</label>
+            <input name="TechnikaTvorby" id="TechnikaTvorby" class="form-control" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Vytvořit</button>
+    <a asp-controller="Predmet" asp-action="Index" class="btn btn-secondary">Zpět</a>
+</form>
+
+
+<script>
+    function toggleFields() {
+        const typ = document.getElementById("Typ").value;
+
+        // Reset all fields
+        document.querySelectorAll('.subtype-fields').forEach(field => field.style.display = 'none');
+
+        // Show relevant fields based on selected type
+        if (typ === "O") {
+            document.getElementById("ObrazFields").style.display = "block";
+        } else if (typ === "F") {
+            document.getElementById("FotografieFields").style.display = "block";
+        } else if (typ === "S") {
+            document.getElementById("SochaFields").style.display = "block";
+        }
+    }
+</script>

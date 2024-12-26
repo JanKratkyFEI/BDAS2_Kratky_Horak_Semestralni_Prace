@@ -11,6 +11,13 @@
         public string Zanr { get; set; }
         public string Licence { get; set; }
 
+        public int id_stav { get; set; }
+
+        public int id_sbirka {  get; set; }
+
+        public string stavNazev { get; set; }
+        public string sbirkaNazev { get; set; }
+
         // Specifické atributy pro Obraz
         public string UmeleckyStyl { get; set; }
         public string Medium { get; set; }

@@ -1,0 +1,31 @@
+﻿@model Predmet
+
+<h2>Detail předmětu</h2>
+
+<div>
+    <p><strong>Název:</strong> @Model.Nazev</p>
+    <p><strong>Stáří:</strong> @Model.Stari</p>
+    <p><strong>Popis:</strong> @Model.Popis</p>
+    <p><strong>Typ:</strong> @Model.Typ</p>
+    <p><strong>Stav:</strong> @Model.StavPredmetu?.Stav ?? "Neznámý"</p>
+    <p><strong>Sbírka:</strong> @Model.Sbirka?.Nazev ?? "Neznámá"</p>
+
+    @if (Model is Obraz obraz)
+    {
+        <p><strong>Umělecký styl:</strong> @obraz.UmeleckyStyl</p>
+        <p><strong>Médium:</strong> @obraz.Medium</p>
+    }
+    else if (Model is Fotografie fotografie)
+    {
+        <p><strong>Žánr:</strong> @fotografie.Zanr</p>
+        <p><strong>Licence:</strong> @fotografie.Licence</p>
+    }
+    else if (Model is Socha socha)
+    {
+        <p><strong>Váha:</strong> @socha.Vaha</p>
+        <p><strong>Technika tvorby:</strong> @socha.TechnikaTvorby</p>
+    }
+</div>
+
+<a asp-controller="Predmet" asp-action="Index" class="btn btn-secondary">Zpět</a>
+

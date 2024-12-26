@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Predmet>
+
+<h2>Seznam předmětů</h2>
+<div class="scrollable">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Stáří</th>
+                <th>Popis</th>
+                <th>Typ</th>
+                <th>Stav</th>
+                <th>Sbírka</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var predmet in Model)
+            {
+                <tr>
+                    <td>@predmet.Nazev</td>
+                    <td>@predmet.Stari</td>
+                    <td>@predmet.Popis</td>
+                    <td>@(predmet.Typ == "O" ? "Obraz" : predmet.Typ == "F" ? "Fotografie" : predmet.Typ == "S" ? "Socha" : "Neznámý")</td>
+                    <td>@(predmet.StavNazev ?? "Neznámý")</td>
+                    <td>@(predmet.SbirkaNazev ?? "Neznámá")</td>
+                    <td>
+                        <a asp-controller="Predmet" asp-action="Details" asp-route-id="@predmet.IdPredmet" class="btn btn-info">Detail</a>
+                        <a asp-controller="Predmet" asp-action="Edit" asp-route-id="@predmet.IdPredmet" class="btn btn-warning">Upravit</a>
+                        <a asp-controller="Predmet" asp-action="Delete" asp-route-id="@predmet.IdPredmet" class="btn btn-danger">Smazat</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a asp-action="CreateObraz" class="btn btn-primary">Vytvořit obraz</a>
+<a asp-action="CreateFotografie" class="btn btn-primary">Vytvořit fotografii</a>
+<a asp-action="CreateSocha" class="btn btn-primary">Vytvořit sochu</a>
