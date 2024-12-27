@@ -1,9 +1,12 @@
-﻿@model Socha
+﻿@model Obraz
 
-<h2>Vytvořit sochu</h2>
+<h2>Upravit obraz</h2>
 
 <div class="scrollable">
-    <form asp-action="CreateSocha" method="post">
+    <form asp-action="EditObraz" method="post">
+        <!-- Skrytý input pro ID předmětu -->
+        <input asp-for="IdPredmet" type="hidden" />
+
         <!-- Název -->
         <div class="form-group">
             <label asp-for="Nazev"></label>
@@ -43,30 +46,30 @@
             <span asp-validation-for="IdSbirka" class="text-danger"></span>
         </div>
 
-        <!-- Technika tvorby -->
+        <!-- Umělecký styl -->
         <div class="form-group">
-            <label asp-for="TechnikaTvorby"></label>
-            <input asp-for="TechnikaTvorby" class="form-control" />
-            <span asp-validation-for="TechnikaTvorby" class="text-danger"></span>
+            <label asp-for="UmeleckyStyl"></label>
+            <input asp-for="UmeleckyStyl" class="form-control" />
+            <span asp-validation-for="UmeleckyStyl" class="text-danger"></span>
         </div>
 
-        <!-- Váha -->
+        <!-- Medium -->
         <div class="form-group">
-            <label asp-for="Vaha"></label>
-            <input asp-for="Vaha" class="form-control" type="number" />
-            <span asp-validation-for="Vaha" class="text-danger"></span>
+            <label asp-for="Medium"></label>
+            <input asp-for="Medium" class="form-control" />
+            <span asp-validation-for="Medium" class="text-danger"></span>
         </div>
 
         <!-- Typ (zobrazený, ale disabled) -->
         <div class="form-group">
             <label asp-for="Typ">Typ</label>
-            <input asp-for="Typ" class="form-control" value="S" disabled />
-            <!-- Skryté pole pro přenos hodnoty Typ -->
-            <input asp-for="Typ" type="hidden" value="S" />
+            <input asp-for="Typ" class="form-control" value="O" disabled />
+            <input asp-for="Typ" type="hidden" value="O" />
         </div>
 
         <!-- Tlačítka -->
-        <button type="submit" class="btn btn-primary">Vytvořit</button>
+        <button type="submit" class="btn btn-primary">Uložit změny</button>
         <a asp-action="Index" class="btn btn-secondary">Zpět</a>
     </form>
 </div>
+

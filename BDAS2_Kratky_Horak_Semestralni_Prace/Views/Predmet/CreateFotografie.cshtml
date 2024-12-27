@@ -3,6 +3,7 @@
 <h2>Vytvořit fotografie</h2>
 
 <form asp-action="CreateFotografie" method="post">
+    <div class="scrollable">
     <div class="form-group">
         <label asp-for="Nazev"></label>
         <input asp-for="Nazev" class="form-control" />
@@ -31,6 +32,14 @@
     <div class="form-group">
         <label asp-for="Licence"></label>
         <input asp-for="Licence" class="form-control" />
+    </div>
+    <!-- Typ - zobrazený ale disabled -->
+    <div class="form-group">
+        <label asp-for="Typ">Typ</label>
+        <input asp-for="Typ" class="form-control" value="F" disabled />
+        <!-- Skryté pole pro přenos hodnoty Typ -->
+        <input asp-for="Typ" type="hidden" value="F" />
+    </div>
     </div>
 
     <button type="submit" class="btn btn-primary">Vytvořit</button>

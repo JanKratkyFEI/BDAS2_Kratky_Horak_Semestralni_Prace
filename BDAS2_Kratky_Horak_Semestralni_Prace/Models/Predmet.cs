@@ -8,8 +8,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         public int IdPredmet { get; set; }
         //atributy
         public string Nazev { get; set; }
-        public int Stari { get; set; }
-        public string Popis { get; set; }
+        public int? Stari { get; set; }
+        public string? Popis { get; set; }
         public string Typ { get; set; }
 
         //FK

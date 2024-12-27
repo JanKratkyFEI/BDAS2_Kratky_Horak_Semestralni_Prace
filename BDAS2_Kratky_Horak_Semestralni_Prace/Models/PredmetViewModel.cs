@@ -4,7 +4,9 @@
     {
         // Společné atributy pro všechny předměty
         public string Nazev { get; set; }
-        public string Popis { get; set; }
+
+        public int? Stari { get; set; }
+        public string? Popis { get; set; }
         public string Typ { get; set; } // Typ předmětu, např. "Fotografie", "Obraz", "Socha"
 
         // Specifické atributy pro Fotografie

@@ -26,7 +26,18 @@
                     <td>@(predmet.SbirkaNazev ?? "Neznámá")</td>
                     <td>
                         <a asp-controller="Predmet" asp-action="Details" asp-route-id="@predmet.IdPredmet" class="btn btn-info">Detail</a>
-                        <a asp-controller="Predmet" asp-action="Edit" asp-route-id="@predmet.IdPredmet" class="btn btn-warning">Upravit</a>
+                        @if (predmet.Typ == "O")
+                        {
+                            <a asp-controller="Predmet" asp-action="EditObraz" asp-route-id="@predmet.IdPredmet" class="btn btn-warning">Upravit</a>
+                        }
+                        else if (predmet.Typ == "F")
+                        {
+                            <a asp-controller="Predmet" asp-action="EditFotografie" asp-route-id="@predmet.IdPredmet" class="btn btn-warning">Upravit</a>
+                        }
+                        else if (predmet.Typ == "S")
+                        {
+                            <a asp-controller="Predmet" asp-action="EditSocha" asp-route-id="@predmet.IdPredmet" class="btn btn-warning">Upravit</a>
+                        }
                         <a asp-controller="Predmet" asp-action="Delete" asp-route-id="@predmet.IdPredmet" class="btn btn-danger">Smazat</a>
                     </td>
                 </tr>

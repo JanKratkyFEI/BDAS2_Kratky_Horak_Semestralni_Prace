@@ -39,6 +39,13 @@
         <select asp-for="IdOddeleni" asp-items="ViewBag.OddeleniList" class="form-control"></select>
     </div>
 
+    <div class="form-group">
+        <label for="IdRecZamestnanec">Nadřízený</label>
+        <select asp-for="IdRecZamestnanec" asp-items="ViewBag.EmployeesList" class="form-control">
+            <option value="">-- Vyberte nadřízeného --</option>
+        </select>
+    </div>
+
     <button type="submit" class="btn btn-primary mt-3">Uložit změny</button>
     <a asp-action="Search" class="btn btn-secondary mt-3">Zpět</a>
 </form>

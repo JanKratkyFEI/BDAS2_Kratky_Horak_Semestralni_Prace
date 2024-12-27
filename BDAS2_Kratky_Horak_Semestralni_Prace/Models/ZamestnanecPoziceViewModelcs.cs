@@ -8,6 +8,8 @@
         public decimal Plat { get; set; }
         public string TypSmlouva { get; set; }
         public int IdOddeleni { get; set; }
+
+        public int? IdRecZamestnanec { get; set; }
     }
 
 }

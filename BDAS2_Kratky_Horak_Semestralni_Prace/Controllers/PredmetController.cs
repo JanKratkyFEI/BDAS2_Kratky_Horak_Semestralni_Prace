@@ -17,10 +17,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         public IActionResult Index()
         {
             var predmety = _connectionString.GetPredmety();
-            foreach (var predmet in predmety)
-            {
-                Console.WriteLine($"ID: {predmet.IdPredmet}, Nazev: {predmet.Nazev}, StavNazev: {predmet.StavNazev}, SbirkaNazev: {predmet.SbirkaNazev}");
-            }
+           
 
             return View(predmety);
         }
@@ -65,30 +62,43 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
 
 
+       
+
         [HttpPost]
         public IActionResult CreateObraz(Obraz obraz)
         {
             if (!ModelState.IsValid)
             {
-                // Výpis chyb do konzole (pro debugging)
-                foreach (var state in ModelState)
-                {
-                    Console.WriteLine($"Klíč: {state.Key}, Chyby: {string.Join(", ", state.Value.Errors.Select(e => e.ErrorMessage))}");
-                }
-
-                // Znovu naplnění ViewBag pro View
-                ViewBag.Stavy = new SelectList(_connectionString.GetAllStavyPredmetu(), "IdStav", "Nazev");
-                ViewBag.Sbirky = new SelectList(_connectionString.GetAllSbirky(), "IdSbirka", "Nazev");
+                // Znovu naplnění ViewBag
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
 
                 return View(obraz);
             }
 
-            // Použití AddObraz k vložení dat
-            _connectionString.AddObraz(obraz);
+            try
+            {
+                // Vložení obrazu
+                _connectionString.AddObraz(obraz);
 
-            // Přesměrování na Index
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Došlo k chybě při ukládání obrazu: " + ex.Message);
+
+                // Znovu naplnění ViewBag při výjimce
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(obraz);
+            }
         }
+
 
 
 
@@ -97,129 +107,327 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult CreateFotografie()
         {
-            ViewBag.Stavy = new SelectList(_connectionString.GetAllStavyPredmetu(), "IdStav", "Nazev");
-            ViewBag.Sbirky = new SelectList(_connectionString.GetAllSbirky(), "IdSbirka", "Nazev");
+            var stavy = _connectionString.GetAllStavyPredmetu();
+            var sbirky = _connectionString.GetAllSbirky();
+
+            if (stavy == null || !stavy.Any())
+            {
+                ModelState.AddModelError("", "Seznam stavů není dostupný.");
+                ViewBag.Stavy = new List<SelectListItem>();
+            }
+            else
+            {
+                ViewBag.Stavy = stavy.Select(s => new SelectListItem
+                {
+                    Value = s.IdStav.ToString(),
+                    Text = s.Stav
+                }).ToList();
+            }
+
+            if (sbirky == null || !sbirky.Any())
+            {
+                ModelState.AddModelError("", "Seznam sbírek není dostupný.");
+                ViewBag.Sbirky = new List<SelectListItem>();
+            }
+            else
+            {
+                ViewBag.Sbirky = sbirky.Select(s => new SelectListItem
+                {
+                    Value = s.IdSbirka.ToString(),
+                    Text = s.Nazev
+                }).ToList();
+            }
 
             return View(new Fotografie());
         }
+
 
         [HttpPost]
         public IActionResult CreateFotografie(Fotografie fotografie)
         {
             if (!ModelState.IsValid)
             {
-                foreach (var state in ModelState)
-                {
-                    var errors = state.Value.Errors;
-                    foreach (var error in errors)
-                    {
-                        Console.WriteLine($"Klíč: {state.Key} - Chyba: {error.ErrorMessage}");
-                    }
-                }
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
                 return View(fotografie);
             }
 
-            var predmet = new Predmet
+            try
             {
-                Nazev = fotografie.Nazev,
-                Stari = fotografie.Stari,
-                Popis = fotografie.Popis,
-                Typ = "F",
-                IdStav = fotografie.IdStav,
-                IdSbirka = fotografie.IdSbirka
-            };
-            _connectionString.InsertPredmet(predmet);
+                _connectionString.AddFotografie(fotografie);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Došlo k chybě při ukládání fotografie: " + ex.Message);
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
 
-            fotografie.IdPredmet = predmet.IdPredmet;
-            _connectionString.AddFotografie(fotografie);
-
-            return RedirectToAction("Index");
+                return View(fotografie);
+            }
         }
 
         [HttpGet]
         public IActionResult CreateSocha()
         {
-            ViewBag.Stavy = new SelectList(_connectionString.GetAllStavyPredmetu(), "IdStav", "Nazev");
-            ViewBag.Sbirky = new SelectList(_connectionString.GetAllSbirky(), "IdSbirka", "Nazev");
+            var stavy = _connectionString.GetAllStavyPredmetu();
+            var sbirky = _connectionString.GetAllSbirky();
+
+            if (stavy == null || !stavy.Any())
+            {
+                ModelState.AddModelError("", "Seznam stavů není dostupný.");
+                ViewBag.Stavy = new List<SelectListItem>();
+            }
+            else
+            {
+                ViewBag.Stavy = stavy.Select(s => new SelectListItem
+                {
+                    Value = s.IdStav.ToString(),
+                    Text = s.Stav
+                }).ToList();
+            }
+
+            if (sbirky == null || !sbirky.Any())
+            {
+                ModelState.AddModelError("", "Seznam sbírek není dostupný.");
+                ViewBag.Sbirky = new List<SelectListItem>();
+            }
+            else
+            {
+                ViewBag.Sbirky = sbirky.Select(s => new SelectListItem
+                {
+                    Value = s.IdSbirka.ToString(),
+                    Text = s.Nazev
+                }).ToList();
+            }
 
             return View(new Socha());
         }
+
 
         [HttpPost]
         public IActionResult CreateSocha(Socha socha)
         {
             if (!ModelState.IsValid)
-                return View(socha);
-
-            var predmet = new Predmet
             {
-                Nazev = socha.Nazev,
-                Stari = socha.Stari,
-                Popis = socha.Popis,
-                Typ = "S",
-                IdStav = socha.IdStav,
-                IdSbirka = socha.IdSbirka
-            };
-            _connectionString.InsertPredmet(predmet);
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
 
-            socha.IdPredmet = predmet.IdPredmet;
-            _connectionString.AddSocha(socha);
+                return View(socha);
+            }
 
-            return RedirectToAction("Index");
+            try
+            {
+                _connectionString.AddSocha(socha);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Došlo k chybě při ukládání sochy: " + ex.Message);
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(socha);
+            }
         }
 
 
 
+        [HttpGet]
+        public IActionResult EditObraz(int id)
+        {
+            var obraz = _connectionString.GetObrazById(id);
 
-        //[HttpGet]
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
+            if (obraz == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+
+            ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+            return View(obraz);
+        }
+
+        [HttpPost]
+        public IActionResult EditObraz(Obraz obraz)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Znovu naplníme ViewBag s potřebnými daty (stavy, sbírky)
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(obraz); // Vrací zpět formulář s validací
+            }
+
+            try
+            {
+               
+
+                // Aktualizace specifických atributů obrazu
+                _connectionString.UpdateObraz(obraz);
+
+                return RedirectToAction("Index"); // Přesměrování na seznam
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Došlo k chybě při ukládání změn: " + ex.Message);
+
+                // Znovu naplníme ViewBag při výjimce
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(obraz);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EditFotografie(int id)
+        {
+            // Získání dat fotografie podle ID
+            var fotografie = _connectionString.GetFotografieById(id);
+            if (fotografie == null)
+            {
+                return NotFound();
+            }
+
+            // Naplnění ViewBag s daty pro výběr
+            ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+            ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+            return View(fotografie);
+        }
+
+        [HttpPost]
+        public IActionResult EditFotografie(Fotografie fotografie)
+        {
+            if (!ModelState.IsValid)
+            {
+
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        Console.WriteLine($"Chyba v {state.Key}: {error.ErrorMessage}");
+                    }
+                }
+
+                // Naplnění ViewBag při validaci
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(fotografie);
+            }
+
+            try
+            {
+                // Aktualizace fotografie v databázi
+                _connectionString.UpdateFotografie(fotografie);
+
+                return RedirectToAction("Index"); // Přesměrování na seznam
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Došlo k chybě při ukládání změn: " + ex.Message);
+
+                // Naplnění ViewBag při chybě
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(fotografie);
+            }
+        }
 
 
-        //[HttpPost]
-        //public IActionResult Create(Predmet predmet, Obraz obraz, Fotografie fotografie, Socha socha)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Diagnostický výpis chyb
-        //        foreach (var key in ModelState.Keys)
-        //        {
-        //            var state = ModelState[key];
-        //            if (state.Errors.Any())
-        //            {
-        //                Console.WriteLine($"Klíč: {key}");
-        //                foreach (var error in state.Errors)
-        //                {
-        //                    Console.WriteLine($"  - Chyba: {error.ErrorMessage}");
-        //                }
-        //            }
-        //        }
+        [HttpGet]
+        public IActionResult EditSocha(int id)
+        {
+            // Získání dat sochy podle ID
+            var socha = _connectionString.GetSochaById(id);
+            if (socha == null)
+            {
+                return NotFound();
+            }
 
-        //        return View(predmet);
-        //    }
+            // Naplnění ViewBag s daty pro výběr
+            ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+            ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
 
-        //    _connectionString.InsertPredmet(predmet);
+            return View(socha);
+        }
 
-        //    switch (predmet.Typ)
-        //    {
-        //        case "Obraz":
-        //            obraz.IdPredmet = predmet.IdPredmet;
-        //            _connectionString.AddObraz(obraz);
-        //            break;
-        //        case "Fotografie":
-        //            fotografie.IdPredmet = predmet.IdPredmet;
-        //            _connectionString.AddFotografie(fotografie);
-        //            break;
-        //        case "Socha":
-        //            socha.IdPredmet = predmet.IdPredmet;
-        //            _connectionString.AddSocha(socha);
-        //            break;
-        //    }
+        [HttpPost]
+        public IActionResult EditSocha(Socha socha)
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        Console.WriteLine($"Chyba v {state.Key}: {error.ErrorMessage}");
+                    }
+                }
 
-        //    return RedirectToAction("Index");
-        //}
+                // Naplnění ViewBag při validaci
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(socha);
+            }
+
+            try
+            {
+                // Aktualizace sochy v databázi
+                _connectionString.UpdateSocha(socha);
+
+                return RedirectToAction("Index"); // Přesměrování na seznam
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Došlo k chybě při ukládání změn: " + ex.Message);
+
+                // Naplnění ViewBag při chybě
+                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+                ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+                return View(socha);
+            }
+        }
+
+
+
 
 
 
@@ -286,6 +494,38 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 return RedirectToAction("Delete", new { id = id });
             }
         }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            // Načtení předmětu z databáze podle ID
+            var predmet = _connectionString.GetPredmetById(id);
+
+            if (predmet == null)
+            {
+                return NotFound(); // Pokud není nalezen
+            }
+
+            // Rozhodnutí podle typu předmětu
+            if (predmet.Typ == "O")
+            {
+                var obraz = _connectionString.GetObrazById(id);
+                return View("DetailsObraz", obraz);
+            }
+            else if (predmet.Typ == "F")
+            {
+                var fotografie = _connectionString.GetFotografieById(id);
+                return View("DetailsFotografie", fotografie);
+            }
+            else if (predmet.Typ == "S")
+            {
+                var socha = _connectionString.GetSochaById(id);
+                return View("DetailsSocha", socha);
+            }
+
+            return NotFound(); // Pokud typ není rozpoznán
+        }
+
 
 
     }

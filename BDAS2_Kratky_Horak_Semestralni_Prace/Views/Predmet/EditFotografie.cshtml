@@ -1,72 +1,50 @@
-﻿@model Socha
+﻿@model Fotografie
 
-<h2>Vytvořit sochu</h2>
+<h2>Upravit fotografii</h2>
 
 <div class="scrollable">
-    <form asp-action="CreateSocha" method="post">
-        <!-- Název -->
+    <form asp-action="EditFotografie" method="post">
         <div class="form-group">
             <label asp-for="Nazev"></label>
             <input asp-for="Nazev" class="form-control" />
-            <span asp-validation-for="Nazev" class="text-danger"></span>
         </div>
-
-        <!-- Stáří -->
         <div class="form-group">
             <label asp-for="Stari"></label>
             <input asp-for="Stari" class="form-control" type="number" />
-            <span asp-validation-for="Stari" class="text-danger"></span>
         </div>
-
-        <!-- Popis -->
         <div class="form-group">
             <label asp-for="Popis"></label>
             <textarea asp-for="Popis" class="form-control"></textarea>
-            <span asp-validation-for="Popis" class="text-danger"></span>
         </div>
-
-        <!-- Stav -->
         <div class="form-group">
             <label for="IdStav">Stav</label>
             <select asp-for="IdStav" class="form-control" asp-items="ViewBag.Stavy">
                 <option value="">-- Vyberte stav --</option>
             </select>
-            <span asp-validation-for="IdStav" class="text-danger"></span>
         </div>
-
-        <!-- Sbírka -->
         <div class="form-group">
             <label for="IdSbirka">Sbírka</label>
             <select asp-for="IdSbirka" class="form-control" asp-items="ViewBag.Sbirky">
                 <option value="">-- Vyberte sbírku --</option>
             </select>
-            <span asp-validation-for="IdSbirka" class="text-danger"></span>
         </div>
-
-        <!-- Technika tvorby -->
         <div class="form-group">
-            <label asp-for="TechnikaTvorby"></label>
-            <input asp-for="TechnikaTvorby" class="form-control" />
-            <span asp-validation-for="TechnikaTvorby" class="text-danger"></span>
+            <label asp-for="Zanr"></label>
+            <input asp-for="Zanr" class="form-control" />
         </div>
-
-        <!-- Váha -->
         <div class="form-group">
-            <label asp-for="Vaha"></label>
-            <input asp-for="Vaha" class="form-control" type="number" />
-            <span asp-validation-for="Vaha" class="text-danger"></span>
+            <label asp-for="Licence"></label>
+            <input asp-for="Licence" class="form-control" />
         </div>
-
         <!-- Typ (zobrazený, ale disabled) -->
         <div class="form-group">
             <label asp-for="Typ">Typ</label>
-            <input asp-for="Typ" class="form-control" value="S" disabled />
-            <!-- Skryté pole pro přenos hodnoty Typ -->
-            <input asp-for="Typ" type="hidden" value="S" />
+            <input asp-for="Typ" class="form-control" value="F" disabled />
+            <input asp-for="Typ" type="hidden" value="F" />
         </div>
 
-        <!-- Tlačítka -->
-        <button type="submit" class="btn btn-primary">Vytvořit</button>
+
+        <button type="submit" class="btn btn-primary">Uložit změny</button>
         <a asp-action="Index" class="btn btn-secondary">Zpět</a>
     </form>
 </div>

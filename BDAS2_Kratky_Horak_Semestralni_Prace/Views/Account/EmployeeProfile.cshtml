@@ -22,6 +22,8 @@
             <p><strong>Pohlaví:</strong> @(Model.Pohlavi.HasValue ? (Model.Pohlavi == 1 ? "Muž" : "Žena") : "Neuvedeno")</p>
             <p><strong>Adresa:</strong> @Model.AdresaText</p>
             <p><strong>Oddělení:</strong> @Model.OddeleniText</p>
+            <p><strong>Nadřízený:</strong> @(string.IsNullOrEmpty(Model.Nadrizeny) ? "Žádný" : Model.Nadrizeny)</p>
+
         </div>
     </div>
 </div>

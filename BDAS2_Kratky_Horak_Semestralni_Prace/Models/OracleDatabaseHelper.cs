@@ -128,12 +128,16 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = fotografie.IdPredmet;
+                    //command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = fotografie.IdPredmet;
                     command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = fotografie.Nazev;
+                    command.Parameters.Add("p_stari", OracleDbType.Int32).Value = fotografie.IdStav;
+
                     command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = fotografie.Popis ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = fotografie.IdStav;
+                    command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = fotografie.IdSbirka;
                     command.Parameters.Add("p_zanr", OracleDbType.Varchar2).Value = fotografie.Zanr ?? (object)DBNull.Value; ;
                     command.Parameters.Add("p_licence", OracleDbType.Varchar2).Value = fotografie.Licence ?? (object)DBNull.Value;
-
+                    
                     command.ExecuteNonQuery();
                 }
             }
@@ -148,15 +152,21 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 using (var command = new OracleCommand("INSERT_BALICEK.INSERT_OBRAZ", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = obraz.IdPredmet; // Předpokládáme, že ID předmětu už bylo vytvořeno
+                    //command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = obraz.IdPredmet; // Předpokládáme, že ID předmětu už bylo vytvořeno
                     command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = obraz.Nazev ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_stari", OracleDbType.Int32).Value = obraz.Stari;
                     command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = obraz.Popis ?? (object)DBNull.Value;
-                    command.Parameters.Add("p_typ", OracleDbType.Varchar2).Value = obraz.Typ ?? (object)DBNull.Value;
+                   // command.Parameters.Add("p_typ", OracleDbType.Varchar2).Value = obraz.Typ ?? (object)DBNull.Value;
                     command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = obraz.IdStav;
                     command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = obraz.IdSbirka;
                     command.Parameters.Add("p_umelecky_styl", OracleDbType.Varchar2).Value = obraz.UmeleckyStyl ?? (object)DBNull.Value;
                     command.Parameters.Add("p_medium", OracleDbType.Varchar2).Value = obraz.Medium ?? (object)DBNull.Value;
 
+
+                    foreach (OracleParameter param in command.Parameters)
+                    {
+                        Console.WriteLine($"Parametr: {param.ParameterName}, Hodnota: {param.Value}, Typ: {param.OracleDbType}");
+                    }
 
                     command.ExecuteNonQuery();
                 }
@@ -171,9 +181,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                 using (var command = new OracleCommand("INSERT_BALICEK.INSERT_SOCHA", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = socha.IdPredmet;
+                    //command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = socha.IdPredmet;
                     command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = socha.Nazev;
+                    command.Parameters.Add("p_stari", OracleDbType.Int32).Value = socha.IdStav;
                     command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = socha.Popis ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = socha.IdStav;
+                    command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = socha.IdSbirka;
                     command.Parameters.Add("p_vaha", OracleDbType.Decimal).Value = socha.Vaha;
                     command.Parameters.Add("p_technika_tvorby", OracleDbType.Varchar2).Value = socha.TechnikaTvorby ?? (object)DBNull.Value;
 
@@ -452,6 +465,47 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             return stavyList;
         }
 
+        public List<Zamestnanec> GetAllZamestnanci()
+        {
+            var zamestnanci = new List<Zamestnanec>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                var query = @"
+            SELECT 
+                ID_ZAMESTNANEC, JMENO, PRIJMENI, POZICE, ID_REC_ZAMESTNANEC 
+            FROM 
+                ZAMESTNANEC";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var zamestnanec = new Zamestnanec
+                            {
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                IdRecZamestnanec = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
+                                    ? null
+                                    : (int?)reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
+                            };
+
+                            zamestnanci.Add(zamestnanec);
+                        }
+                    }
+                }
+            }
+
+            return zamestnanci;
+        }
+
+
         public List<Oddeleni> GetAllOddeleni()
         {
             var oddeleniList = new List<Oddeleni>();
@@ -699,8 +753,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                             // Nastavení společných atributů
                             predmet.IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET"));
                             predmet.Nazev = reader.GetString(reader.GetOrdinal("NAZEV"));
-                            predmet.Stari = reader.GetInt32(reader.GetOrdinal("STARI"));
-                            predmet.Popis = reader.GetString(reader.GetOrdinal("POPIS"));
+                            predmet.Stari = reader.IsDBNull(reader.GetOrdinal("STARI")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("STARI"));
+                            predmet.Popis = reader.IsDBNull(reader.GetOrdinal("POPIS")) ? null : reader.GetString(reader.GetOrdinal("POPIS"));
                             predmet.Typ = typ;
                             predmet.IdStav = reader.GetInt32(reader.GetOrdinal("ID_STAV"));
                             predmet.IdSbirka = reader.GetInt32(reader.GetOrdinal("ID_SBIRKA"));
@@ -1672,14 +1726,20 @@ SELECT
 
                     using (var reader = command.ExecuteReader())
                     {
+                        // Debug názvů sloupců (pro ladění)
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            Console.WriteLine($"Sloupec {i}: {reader.GetName(i)}");
+                        }
+
                         if (reader.Read())
                         {
                             fotografie = new Fotografie
                             {
                                 IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET")),
                                 Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
-                                Stari = reader.GetInt32(reader.GetOrdinal("STARI")),
-                                Popis = reader.GetString(reader.GetOrdinal("POPIS")),
+                                Stari = reader.IsDBNull(reader.GetOrdinal("STARI")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("STARI")),
+                                Popis = reader.IsDBNull(reader.GetOrdinal("POPIS")) ? null : reader.GetString(reader.GetOrdinal("POPIS")),
                                 Typ = reader.GetString(reader.GetOrdinal("TYP")),
                                 IdStav = reader.GetInt32(reader.GetOrdinal("ID_STAV")),
                                 IdSbirka = reader.GetInt32(reader.GetOrdinal("ID_SBIRKA")),
@@ -1700,12 +1760,12 @@ SELECT
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                var query = @" 
-                    SSELECT p.ID_PREDMET, p.NAZEV, p.STARI, p.POPIS, p.TYP, p.ID_STAV, p.ID_SBIRKA,
+                var query = @"
+            SELECT p.ID_PREDMET, p.NAZEV, p.STARI, p.POPIS, p.TYP, p.ID_STAV, p.ID_SBIRKA,
                    o.UMELECKY_STYL, o.MEDIUM
-                FROM PREDMET p
-                JOIN OBRAZ o ON p.ID_PREDMET = o.ID_PREDMET
-                WHERE p.ID_PREDMET = :id";
+            FROM PREDMET p
+            JOIN OBRAZ o ON p.ID_PREDMET = o.ID_PREDMET
+            WHERE p.ID_PREDMET = :id";
 
                 using (var command = new OracleCommand(query, connection))
                 {
@@ -1718,14 +1778,14 @@ SELECT
                             obraz = new Obraz
                             {
                                 IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET")),
-                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
-                                Stari = reader.GetInt32(reader.GetOrdinal("STARI")),
-                                Popis = reader.GetString(reader.GetOrdinal("POPIS")),
-                                Typ = reader.GetString(reader.GetOrdinal("TYP")),
-                                IdStav = reader.GetInt32(reader.GetOrdinal("ID_STAV")),
-                                IdSbirka = reader.GetInt32(reader.GetOrdinal("ID_SBIRKA")),
-                                UmeleckyStyl = reader.GetString(reader.GetOrdinal("UMELECKY_STYL")),
-                                Medium = reader.GetString(reader.GetOrdinal("MEDIUM"))
+                                Nazev = reader.IsDBNull(reader.GetOrdinal("NAZEV")) ? null : reader.GetString(reader.GetOrdinal("NAZEV")),
+                                Stari = reader.IsDBNull(reader.GetOrdinal("STARI")) ? 0 : reader.GetInt32(reader.GetOrdinal("STARI")),
+                                Popis = reader.IsDBNull(reader.GetOrdinal("POPIS")) ? null : reader.GetString(reader.GetOrdinal("POPIS")),
+                                Typ = reader.IsDBNull(reader.GetOrdinal("TYP")) ? null : reader.GetString(reader.GetOrdinal("TYP")),
+                                IdStav = reader.IsDBNull(reader.GetOrdinal("ID_STAV")) ? 0 : reader.GetInt32(reader.GetOrdinal("ID_STAV")),
+                                IdSbirka = reader.IsDBNull(reader.GetOrdinal("ID_SBIRKA")) ? 0 : reader.GetInt32(reader.GetOrdinal("ID_SBIRKA")),
+                                UmeleckyStyl = reader.IsDBNull(reader.GetOrdinal("UMELECKY_STYL")) ? null : reader.GetString(reader.GetOrdinal("UMELECKY_STYL")),
+                                Medium = reader.IsDBNull(reader.GetOrdinal("MEDIUM")) ? null : reader.GetString(reader.GetOrdinal("MEDIUM"))
                             };
                         }
                     }
@@ -1733,6 +1793,7 @@ SELECT
             }
             return obraz;
         }
+
 
         public Socha GetSochaById(int id)
         {
@@ -1742,7 +1803,7 @@ SELECT
             {
                 connection.Open();
                 var query = @"
-                    SELECT p.ID_PREDMET, p.NAZEV, p.POPIS,p.TYP, p.ID_STAV,p.ID_SBIRKA,
+                    SELECT p.ID_PREDMET, p.NAZEV,p.STARI, p.POPIS,p.TYP, p.ID_STAV,p.ID_SBIRKA,
                            s.VAHA, s.TECHNIKA_TVORBY
                     FROM PREDMET p
                     JOIN SOCHA s ON p.ID_PREDMET = s.ID_PREDMET
@@ -1753,14 +1814,19 @@ SELECT
 
                     using (var reader = command.ExecuteReader())
                     {
+                        // Debug názvů sloupců (pro ladění)
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            Console.WriteLine($"Sloupec {i}: {reader.GetName(i)}");
+                        }
                         if (reader.Read())
                         {
                             socha = new Socha
                             {
                                 IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET")),
                                 Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
-                                Popis = reader.GetString(reader.GetOrdinal("POPIS")),
-                                Stari = reader.GetInt32(reader.GetOrdinal("STARI")),
+                                Stari = reader.IsDBNull(reader.GetOrdinal("STARI")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("STARI")),
+                                Popis = reader.IsDBNull(reader.GetOrdinal("POPIS")) ? null : reader.GetString(reader.GetOrdinal("POPIS")),
                                 Typ = reader.GetString(reader.GetOrdinal("TYP")),
                                 IdStav = reader.GetInt32(reader.GetOrdinal("ID_STAV")),
                                 IdSbirka = reader.GetInt32(reader.GetOrdinal("ID_SBIRKA")),
@@ -1811,6 +1877,95 @@ SELECT
 
 
         //UPDATE
+
+        public void UpdateSocha(Socha socha)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_SOCHA", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    Console.WriteLine($"p_id_predmet: {socha.IdPredmet}");
+                    Console.WriteLine($"p_nazev: {socha.Nazev}");
+                    Console.WriteLine($"p_stari: {socha.Stari}");
+                    Console.WriteLine($"p_popis: {socha.Popis}");
+                    Console.WriteLine($"p_id_stav: {socha.IdStav}");
+                    Console.WriteLine($"p_id_sbirka: {socha.IdSbirka}");
+                    Console.WriteLine($"p_technika_tvorby: {socha.TechnikaTvorby}");
+                    Console.WriteLine($"p_vaha: {socha.Vaha}");
+
+                    command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = socha.IdPredmet;
+                    command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = socha.Nazev ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_stari", OracleDbType.Int32).Value = socha.Stari.HasValue ? (object)socha.Stari.Value : DBNull.Value;
+                    command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = socha.Popis ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = socha.IdStav;
+                    command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = socha.IdSbirka;
+                    command.Parameters.Add("p_vaha", OracleDbType.Decimal).Value = socha.Vaha;
+                    command.Parameters.Add("p_technika_tvorby", OracleDbType.Varchar2).Value = socha.TechnikaTvorby ?? "Unknown Technique";
+                    
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        public void UpdateFotografie(Fotografie fotografie)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_FOTOGRAFIE", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = fotografie.IdPredmet;
+                    command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = fotografie.Nazev ?? "Unknown Name";
+                    command.Parameters.Add("p_stari", OracleDbType.Int32).Value = fotografie.Stari.HasValue ? (object)fotografie.Stari.Value : DBNull.Value;
+                    command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = fotografie.Popis ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = fotografie.IdStav;
+                    command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = fotografie.IdSbirka;
+                    command.Parameters.Add("p_zanr", OracleDbType.Varchar2).Value = fotografie.Zanr ?? "Unknown Genre";
+                    command.Parameters.Add("p_licence", OracleDbType.Varchar2).Value = fotografie.Licence ?? "Unknown Licence";
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        public void UpdateObraz(Obraz obraz)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using( var command = new OracleCommand("UPDATE_BALICEK.UPDATE_OBRAZ", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = obraz.IdPredmet;
+                    command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = obraz.Nazev ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_stari", OracleDbType.Int32).Value = obraz.Stari ?? (object)DBNull.Value;
+                    command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = obraz.Popis ?? (object)DBNull.Value;
+                    //command.Parameters.Add("p_typ", OracleDbType.Varchar2).Value = "O"; // Typ "O" pro Obraz
+                    command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = obraz.IdStav;
+                    command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = obraz.IdSbirka;
+                    command.Parameters.Add("p_umelecky_styl", OracleDbType.Varchar2).Value = obraz.UmeleckyStyl ?? "Unknown Style";
+                    command.Parameters.Add("p_medium", OracleDbType.Varchar2).Value = obraz.Medium ?? "Unknown Medium";
+
+                    foreach (OracleParameter param in command.Parameters)
+                    {
+                        Console.WriteLine($"Parametr: {param.ParameterName}, Hodnota: {param.Value}, Typ: {param.OracleDbType}");
+                    }
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
 
         public void UpdatePredmet(Predmet predmet)
         {
@@ -1940,6 +2095,31 @@ SELECT
         }
 
 
+        public void UpdateEmployeeDetails(ZamestnanecPoziceViewModel model)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_ZAMESTNANEC", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("p_id_zamestnanec", OracleDbType.Int32).Value = model.IdZamestnanec;
+                    command.Parameters.Add("p_role", OracleDbType.Varchar2).Value = model.Role;
+                    command.Parameters.Add("p_pozice", OracleDbType.Varchar2).Value = model.Pozice;
+                    command.Parameters.Add("p_plat", OracleDbType.Decimal).Value = model.Plat;
+                    command.Parameters.Add("p_typ_smlouva", OracleDbType.Varchar2).Value = model.TypSmlouva;
+                    command.Parameters.Add("p_id_oddeleni", OracleDbType.Int32).Value = model.IdOddeleni;
+                    command.Parameters.Add("p_id_rec_zamestnanec", OracleDbType.Int32).Value = (object)model.IdRecZamestnanec ?? DBNull.Value;
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        
+
+
         public void UpdateZamestnanec(Zamestnanec zamestnanec)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -1947,7 +2127,7 @@ SELECT
                 connection.Open();
 
 
-                using (var command = new OracleCommand("UPDATE_ZAMESTNANEC", connection))
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_ZAMESTNANEC", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.Add("p_IdZamestnanec", OracleDbType.Int32).Value = zamestnanec.IdZamestnanec;
@@ -2144,24 +2324,7 @@ SELECT
         }
 
 
-        public void UpdateEmployeeDetails(ZamestnanecPoziceViewModel zamestnanec)
-        {
-            using (var connection = new OracleConnection(_connectionString))
-            {
-                connection.Open();
-                using (var command = new OracleCommand("UPDATE_BALICEK.update_zamestnanec_pozice", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(new OracleParameter("p_id_zamestnanec", zamestnanec.IdZamestnanec));
-                    command.Parameters.Add(new OracleParameter("p_plat", zamestnanec.Plat));
-                    command.Parameters.Add(new OracleParameter("p_role", zamestnanec.Role));
-                    command.Parameters.Add(new OracleParameter("p_typ_smlouva", zamestnanec.TypSmlouva));
-                    command.Parameters.Add(new OracleParameter("p_pozice", zamestnanec.Pozice));
-                    command.Parameters.Add(new OracleParameter("p_id_oddeleni", zamestnanec.IdOddeleni));
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
+        
 
         public void ProfilePicture(string username, string pictureUrl)
         {
@@ -2359,6 +2522,47 @@ SELECT
                 }
             }
         }
+
+        //Hiearchický dotaz
+
+        public List<HierarchieZamestnancu> GetHierarchieZamestnancu()
+        {
+            var hierarchie = new List<HierarchieZamestnancu>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("HIERARCHIE_BALICEK.GET_HIERARCHIE", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Parametr OUT - REF CURSOR
+                    var cursor = command.Parameters.Add("RETURN_VALUE", OracleDbType.RefCursor);
+                    cursor.Direction = ParameterDirection.ReturnValue;
+
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            hierarchie.Add(new HierarchieZamestnancu
+                            {
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC")),
+                                Jmeno = reader.GetString(reader.GetOrdinal("JMENO")),
+                                Prijmeni = reader.GetString(reader.GetOrdinal("PRIJMENI")),
+                                Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
+                                NadrazenyId = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
+                                    ? (int?)null
+                                    : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return hierarchie;
+        }
+
 
 
 

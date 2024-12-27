@@ -344,7 +344,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 Pozice = zamestnanec.Pozice,
                 Plat = zamestnanec.Plat,
                 TypSmlouva = zamestnanec.TypSmlouva,
-                IdOddeleni = zamestnanec.IdOddeleni
+                IdOddeleni = zamestnanec.IdOddeleni,
+                IdRecZamestnanec = zamestnanec.IdRecZamestnanec
             };
 
             // Připravit seznam oddělení pro dropdown
@@ -353,6 +354,14 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 {
                     Value = o.IdOddeleni.ToString(),
                     Text = o.Nazev
+                }).ToList();
+
+            ViewBag.EmployeesList = _connectionString.GetAllZamestnanci()
+                .Where(e => e.IdZamestnanec != id) // Zamezíme výběru sebe sama
+                .Select(e => new SelectListItem
+                {
+                Value = e.IdZamestnanec.ToString(),
+                Text = $"{e.Jmeno} {e.Prijmeni} ({e.Pozice})"
                 }).ToList();
 
             return View(viewModel);
@@ -370,6 +379,14 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                         Text = o.Nazev
                     }).ToList();
 
+                ViewBag.EmployeesList = _connectionString.GetAllZamestnanci()
+                    .Where(e => e.IdZamestnanec != model.IdZamestnanec)
+                    .Select(e => new SelectListItem
+                    {
+                     Value = e.IdZamestnanec.ToString(),
+                    Text = $"{e.Jmeno} {e.Prijmeni} ({e.Pozice})"
+                    }).ToList();
+
                 return View(model);
             }
 
@@ -384,6 +401,14 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 ModelState.AddModelError("", "Chyba při aktualizaci zaměstnance: " + ex.Message);
                 return View(model);
             }
+        }
+
+        //hiearchie
+        [HttpGet]
+        public IActionResult Hierarchie()
+        {
+            var hierarchie = _connectionString.GetHierarchieZamestnancu();
+            return View(hierarchie);
         }
 
 

@@ -1,4 +1,6 @@
-﻿namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 {
     public class Zamestnanec
     {
@@ -20,6 +22,9 @@
         public int IdAdresa { get; set; } //odkaz na adresu zamestnance
 
         public int? IdRecZamestnanec { get; set; }
+
+        [ValidateNever]
+        public string Nadrizeny { get; set; }
         //Navigační vlastnosti test
 
         public Oddeleni Oddeleni { get; set; }
