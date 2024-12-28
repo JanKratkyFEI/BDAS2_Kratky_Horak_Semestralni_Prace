@@ -1,0 +1,16 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Material
+
+<div class="container mt-4">
+    <h2>Potvrzení Smazání</h2>
+    <p>Opravdu chcete smazat tento materiál?</p>
+    <dl class="row">
+        <dt class="col-sm-3">Název Materiálu</dt>
+        <dd class="col-sm-9">@Model.Nazev</dd>
+    </dl>
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" name="IdMaterial" value="@Model.IdMaterial" />
+        <button type="submit" class="btn btn-danger">Smazat</button>
+        <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+    </form>
+</div>
+

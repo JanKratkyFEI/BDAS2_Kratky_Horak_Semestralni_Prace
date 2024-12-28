@@ -1,0 +1,14 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Material
+
+<div class="container mt-4">
+    <h2>Upravit Materiál</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" name="IdMaterial" value="@Model.IdMaterial" />
+        <div class="form-group">
+            <label for="Nazev">Název Materiálu</label>
+            <input type="text" class="form-control" id="Nazev" name="Nazev" value="@Model.Nazev" required />
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Uložit</button>
+        <a asp-action="Index" class="btn btn-secondary mt-3">Zpět</a>
+    </form>
+</div>

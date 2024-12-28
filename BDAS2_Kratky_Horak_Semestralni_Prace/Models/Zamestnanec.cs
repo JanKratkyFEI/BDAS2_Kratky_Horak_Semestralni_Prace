@@ -40,6 +40,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         //pic
         public string ProfilePictureUrl { get; set; }
 
+        public int? ProfilePictureId { get; set; }
+
         //idtostring
         public string AdresaText { get; set; }
         public string OddeleniText { get; set; }

@@ -1,0 +1,17 @@
+﻿@model BinarniObsah
+
+<h2>Upravit soubor</h2>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="IdObsah" />
+    <div class="form-group">
+        <label asp-for="NazevSouboru"></label>
+        <input asp-for="NazevSouboru" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="TypSouboru"></label>
+        <input asp-for="TypSouboru" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Uložit změny</button>
+</form>
+
+

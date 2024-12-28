@@ -1,0 +1,19 @@
+﻿@model BinarniObsah
+
+<h2>Smazat soubor</h2>
+
+<div>
+    <p><strong>Název souboru:</strong> @Model.NazevSouboru</p>
+    <p><strong>Typ souboru:</strong> @Model.TypSouboru</p>
+    <p><strong>Přípona:</strong> @Model.PriponaSouboru</p>
+    <p><strong>Datum nahrání:</strong> @Model.DatumNahrani.ToString("g")</p>
+    <p><strong>Datum modifikace:</strong> @Model.DatumModifikace?.ToString("g")</p>
+    <p><strong>Operace:</strong> @Model.Operace</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="IdObsah" />
+    <button type="submit" class="btn btn-danger">Smazat</button>
+    <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
+</form>
+

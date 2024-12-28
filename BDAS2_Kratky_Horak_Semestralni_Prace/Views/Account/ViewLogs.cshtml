@@ -1,0 +1,31 @@
+﻿@model List<BDAS2_Kratky_Horak_Semestralni_Prace.Models.HistoryLog>
+
+<h2>Logy Historie</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Logu</th>
+            <th>Tabulka</th>
+            <th>Operace</th>
+            <th>ID Záznamu</th>
+            <th>ID Zaměstnance</th>
+            <th>Čas</th>
+            <th>Detaily</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.IdLog</td>
+                <td>@log.TableName</td>
+                <td>@log.OperationType</td>
+                <td>@log.RecordId</td>
+                <td>@(log.EmployeeId.HasValue ? log.EmployeeId.ToString() : "N/A")</td>
+                <td>@log.Timestamp.ToString("g")</td>
+                <td>@log.Details</td>
+            </tr>
+        }
+    </tbody>
+</table>

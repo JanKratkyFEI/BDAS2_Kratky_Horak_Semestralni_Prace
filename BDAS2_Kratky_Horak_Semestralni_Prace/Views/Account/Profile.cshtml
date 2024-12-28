@@ -26,7 +26,7 @@
             <p><strong>Nadřízený:</strong> @(string.IsNullOrEmpty(Model.Nadrizeny) ? "Žádný" : Model.Nadrizeny)</p>
 
 
-
+            <div class="fixed-bottom bg-dark p-3 text-center">
             <a asp-action="EditProfile" asp-controller="Account" class="btn btn-primary">Změnit údaje</a>
             <a asp-action="ChangeProfilePicture" class="btn btn-secondary">Změnit Profilový obrázek</a>
 
@@ -34,8 +34,16 @@
         {
     <a asp-controller="Account" asp-action="Hierarchie" class="btn btn-info">Zobrazit hierarchii zaměstnanců</a>
     }
+                @if (ViewData["EmulatedRole"]?.ToString() == "Admin")
+                {
+                    <a asp-action="DatabaseObjects" class="btn btn-info">Výpis databázových objektů</a>
+                    <a asp-action="ViewLogs" asp-controller="Account" class="btn btn-info">Zobrazit Logy</a>
+                }
+
+                
 
 
+            </div>
         </div>
     </div>
 </div>

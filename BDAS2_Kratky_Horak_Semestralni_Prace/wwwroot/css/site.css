@@ -107,3 +107,17 @@ footer .role-emulation-form {
     margin-top: 20px;
     text-align: center;
 }
+
+.fixed-bottom {
+    background-color: #343a40; /* Stejná barva jako záhlaví */
+    padding: 15px;
+}
+
+.overflow-auto {
+    overflow-y: auto;
+}
+
+img.img-thumbnail {
+    max-width: 100%;
+    height: auto;
+}

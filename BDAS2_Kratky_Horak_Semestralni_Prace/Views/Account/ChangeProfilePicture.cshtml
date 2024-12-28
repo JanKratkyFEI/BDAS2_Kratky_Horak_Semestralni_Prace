@@ -1,13 +1,20 @@
-﻿<h2>Změnit profilový obrázek</h2>
+﻿@model List<BinarniObsah>
 
-<form asp-action="ChangeProfilePicture" asp-controller="Account" method="post" enctype="multipart/form-data">
+<h2>Vyberte nový profilový obrázek</h2>
+<form asp-action="ChangeProfilePicture" method="post">
     <div class="form-group">
-        <label for="profilePicture">Vyberte nový profilový obrázek</label>
-        <input type="file" class="form-control" id="profilePicture" name="profilePicture" required />
+        <label for="profilePicture">Vyberte obrázek:</label>
+        <select name="selectedFileId" class="form-control">
+            @foreach (var file in Model)
+            {
+                <option value="@file.IdObsah">@file.NazevSouboru</option>
+            }
+        </select>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Nahrát</button>
+    <button type="submit" class="btn btn-primary mt-3">Změnit obrázek</button>
     <a asp-action="Profile" class="btn btn-secondary mt-3">Zpět</a>
-
 </form>
+
+
 
 

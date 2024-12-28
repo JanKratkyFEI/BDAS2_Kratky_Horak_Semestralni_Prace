@@ -7,5 +7,7 @@
         public string Prijmeni { get; set; }
         public string Pozice { get; set; }
         public int? NadrazenyId { get; set; }
+
+        public int Level { get; set; }
     }
 }

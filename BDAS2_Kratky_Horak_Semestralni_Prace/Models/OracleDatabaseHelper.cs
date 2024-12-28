@@ -6,6 +6,7 @@ using System.Data;
 using System.IO.Pipelines;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
+using System.Transactions;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 {
@@ -22,6 +23,26 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         public string ConnectionString => _connectionString;
 
         //ADD METODY
+
+        public void AddFile(BinarniObsah file)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("INSERT_BALICEK.INSERT_BINARNI_OBSAH", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("P_NAZEV_SOUBORU", OracleDbType.Varchar2).Value = file.NazevSouboru;
+                    command.Parameters.Add("P_TYP_SOUBORU", OracleDbType.Varchar2).Value = file.TypSouboru;
+                    command.Parameters.Add("P_PRIPONA_SOUBORU", OracleDbType.Varchar2).Value = file.PriponaSouboru;
+                    command.Parameters.Add("P_OBSAH", OracleDbType.Blob).Value = file.Obsah;
+                    command.Parameters.Add("P_ID_ZAMESTNANEC", OracleDbType.Int32).Value = file.IdZamestnanec;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
         public void AddAdresa(Adresa adresa)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -299,6 +320,37 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
 
         //GET METODY
+
+
+        public List<BinarniObsah> GetAllFiles()
+        {
+            var files = new List<BinarniObsah>();
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT * FROM BINARNI_OBSAH";
+                using (var command = new OracleCommand(query, connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        files.Add(new BinarniObsah
+                        {
+                            IdObsah = reader.GetInt32(reader.GetOrdinal("ID_OBSAH")),
+                            NazevSouboru = reader.GetString(reader.GetOrdinal("NAZEV_SOUBORU")),
+                            TypSouboru = reader.GetString(reader.GetOrdinal("TYP_SOUBORU")),
+                            PriponaSouboru = reader.GetString(reader.GetOrdinal("PRIPONA_SOUBORU")),
+                            DatumNahrani = reader.GetDateTime(reader.GetOrdinal("DATUM_NAHRANI")),
+                            DatumModifikace = reader.IsDBNull(reader.GetOrdinal("DATUM_MODIFIKACE")) ? null : reader.GetDateTime(reader.GetOrdinal("DATUM_MODIFIKACE")),
+                            Operace = reader.GetString(reader.GetOrdinal("OPERACE"))
+                        });
+                    }
+                }
+            }
+            return files;
+        }
+
+
         public List<Adresa> GetAllAdresa()
         {
             var adresaList = new List<Adresa>();
@@ -433,6 +485,56 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
             return muzeum;
         }
+
+        public List<BinarniObsah> GetFilesByEmployeeId(int employeeId)
+        {
+            var files = new List<BinarniObsah>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT 
+                ID_OBSAH,
+                NAZEV_SOUBORU,
+                TYP_SOUBORU,
+                PRIPONA_SOUBORU,
+                DATUM_NAHRANI,
+                DATUM_MODIFIKACE,
+                OPERACE,
+                ID_ZAMESTNANEC
+            FROM BINARNI_OBSAH
+            WHERE ID_ZAMESTNANEC = :employeeId";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add("employeeId", OracleDbType.Int32).Value = employeeId;
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            files.Add(new BinarniObsah
+                            {
+                                IdObsah = reader.GetInt32(reader.GetOrdinal("ID_OBSAH")),
+                                NazevSouboru = reader.GetString(reader.GetOrdinal("NAZEV_SOUBORU")),
+                                TypSouboru = reader.GetString(reader.GetOrdinal("TYP_SOUBORU")),
+                                PriponaSouboru = reader.GetString(reader.GetOrdinal("PRIPONA_SOUBORU")),
+                                DatumNahrani = reader.GetDateTime(reader.GetOrdinal("DATUM_NAHRANI")),
+                                DatumModifikace = reader.IsDBNull(reader.GetOrdinal("DATUM_MODIFIKACE"))
+                                    ? (DateTime?)null
+                                    : reader.GetDateTime(reader.GetOrdinal("DATUM_MODIFIKACE")),
+                                Operace = reader.GetString(reader.GetOrdinal("OPERACE")),
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return files;
+        }
+
 
 
         public List<StavPredmetu> GetAllStavyPredmetu()
@@ -1287,6 +1389,34 @@ SELECT
             return zamestnanec;
         }
 
+        public int? GetProfilePictureId(int employeeId)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = @"
+            SELECT ID_FILE
+            FROM EMPLOYEE_PROFILE_PICTURE
+            WHERE ID_EMPLOYEE = :employeeId";
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("employeeId", employeeId));
+
+                    var result = command.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            // Vrátí ID defaultního obrázku
+            return 2; // Nahraďte 1 skutečným ID defaultního obrázku
+        }
+
+
+
         public Zamestnanec GetZamestnanecJoinDetails(string username)
         {
             Zamestnanec zamestnanec = null;
@@ -1307,6 +1437,7 @@ SELECT
             z.TYP_SMLOUVA,
             z.PLAT,
             z.POHLAVI,
+            z.ID_REC_ZAMESTNANEC,
             a.ULICE || ', ' || a.PSC AS NAZEV_ADRESY,
             o.NAZEV AS NAZEV_ODDELENI,
             z.ROLE
@@ -1339,6 +1470,7 @@ SELECT
                             var adresaText = reader.IsDBNull(reader.GetOrdinal("NAZEV_ADRESY")) ? "Neznámá adresa" : reader.GetString(reader.GetOrdinal("NAZEV_ADRESY"));
                             var oddeleniText = reader.IsDBNull(reader.GetOrdinal("NAZEV_ODDELENI")) ? "Neznámé oddělení" : reader.GetString(reader.GetOrdinal("NAZEV_ODDELENI"));
                             var role = reader.GetString(reader.GetOrdinal("ROLE"));
+                            var idRecZamestnanec = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC"));
 
                             // Naplnění objektu
                             zamestnanec = new Zamestnanec
@@ -1355,7 +1487,8 @@ SELECT
                                 DatumZamestnani = datumZamestnani,
                                 AdresaText = adresaText,
                                 OddeleniText = oddeleniText,
-                                Role = role
+                                Role = role,
+                                IdRecZamestnanec = idRecZamestnanec
                             };
                         }
                     }
@@ -1388,7 +1521,8 @@ SELECT
                 DATUM_ZAMESTNANI, 
                 TYP_SMLOUVA,
                 PLAT,
-                POHLAVI
+                POHLAVI,
+                ID_REC_ZAMESTNANEC
             FROM 
                 ZAMESTNANEC_PRIVACY_VIEW
             WHERE
@@ -1417,8 +1551,11 @@ SELECT
                                 TypSmlouva = reader.GetString(reader.GetOrdinal("TYP_SMLOUVA")),
                                 Plat = reader.GetDecimal(reader.GetOrdinal("PLAT")),
                                 PohlaviText = reader.IsDBNull(reader.GetOrdinal("POHLAVI"))
-    ? "Neuvedeno"
-    : reader.GetInt32(reader.GetOrdinal("POHLAVI")) == 1 ? "Muž" : "Žena",
+                                ? "Neuvedeno"
+                                : reader.GetInt32(reader.GetOrdinal("POHLAVI")) == 1 ? "Muž" : "Žena",
+                                IdRecZamestnanec = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
+                                ? null
+                                : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
                             };
                         }
                     }
@@ -1510,14 +1647,14 @@ SELECT
             }
         }
 
-        public void InsertZamestnanec(Zamestnanec zamestnanec)
+        public void InsertZamestnanec(Zamestnanec zamestnanec, OracleConnection connection, OracleTransaction transaction = null)
         {
-            using (var connection = new OracleConnection(_connectionString))
-            {
-                connection.Open();
+            
+               // connection.Open();
                 using (var command = new OracleCommand("INSERT_BALICEK.INSERT_ZAMESTNANEC", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
+                    command.Transaction = transaction;
 
                     command.Parameters.Add("p_pozice", OracleDbType.Varchar2).Value = zamestnanec.Pozice ?? (object)DBNull.Value;
                     command.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
@@ -1538,7 +1675,7 @@ SELECT
 
                     command.ExecuteNonQuery();
                 }
-            }
+            
         }
 
         public Sbirka GetSbirkaById(int id)
@@ -1874,6 +2011,45 @@ SELECT
 
             return oddeleni;
         }
+
+        public BinarniObsah GetFileById(int id)
+        {
+            BinarniObsah file = null;
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                var query = "SELECT * FROM BINARNI_OBSAH WHERE ID_OBSAH = :Id";
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add("Id", OracleDbType.Int32).Value = id;
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            file = new BinarniObsah
+                            {
+                                IdObsah = reader.GetInt32(reader.GetOrdinal("ID_OBSAH")),
+                                NazevSouboru = reader.GetString(reader.GetOrdinal("NAZEV_SOUBORU")),
+                                TypSouboru = reader.GetString(reader.GetOrdinal("TYP_SOUBORU")),
+                                PriponaSouboru = reader.GetString(reader.GetOrdinal("PRIPONA_SOUBORU")),
+                                Obsah = reader["OBSAH"] as byte[], // Ukládáme obsah jako byte pole
+                                DatumNahrani = reader.GetDateTime(reader.GetOrdinal("DATUM_NAHRANI")),
+                                DatumModifikace = reader.IsDBNull(reader.GetOrdinal("DATUM_MODIFIKACE"))
+                                    ? null
+                                    : reader.GetDateTime(reader.GetOrdinal("DATUM_MODIFIKACE")),
+                                Operace = reader.GetString(reader.GetOrdinal("OPERACE")),
+                                IdZamestnanec = reader.GetInt32(reader.GetOrdinal("ID_ZAMESTNANEC"))
+                            };
+                        }
+                    }
+                }
+            }
+
+            return file;
+        }
+
 
 
         //UPDATE
@@ -2323,8 +2499,55 @@ SELECT
             }
         }
 
+        public void UpdateProfilePicture(int employeeId, int fileId)
+        {
+            System.Diagnostics.Debug.WriteLine($"Updating profile picture: EmployeeId={employeeId}, FileId={fileId}");
 
-        
+            var query = @"
+    MERGE INTO EMPLOYEE_PROFILE_PICTURE epp
+    USING (SELECT :employeeId AS ID_EMPLOYEE, :fileId AS ID_FILE FROM DUAL) src
+    ON (epp.ID_EMPLOYEE = src.ID_EMPLOYEE)
+    WHEN MATCHED THEN
+        UPDATE SET epp.ID_FILE = src.ID_FILE
+    WHEN NOT MATCHED THEN
+        INSERT (ID_EMPLOYEE, ID_FILE) VALUES (src.ID_EMPLOYEE, src.ID_FILE)";
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open(); // Otevření připojení
+
+                using (var command = new OracleCommand(query, connection))
+                {
+                    command.Parameters.Add(new OracleParameter("employeeId", employeeId));
+                    command.Parameters.Add(new OracleParameter("fileId", fileId));
+                    command.ExecuteNonQuery(); // Spuštění příkazu
+                }
+            }
+        }
+
+
+
+        //bin obsah
+        public void UpdateFile(BinarniObsah file)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_BINARNI_OBSAH", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("P_ID_OBSAH", OracleDbType.Int32).Value = file.IdObsah;
+                    command.Parameters.Add("P_NAZEV_SOUBORU", OracleDbType.Varchar2).Value = file.NazevSouboru;
+                    command.Parameters.Add("P_TYP_SOUBORU", OracleDbType.Varchar2).Value = file.TypSouboru;
+                    command.Parameters.Add("P_PRIPONA_SOUBORU", OracleDbType.Varchar2).Value = file.PriponaSouboru;
+                    command.Parameters.Add("P_OBSAH", OracleDbType.Blob).Value = file.Obsah;
+                    command.Parameters.Add("P_ID_ZAMESTNANEC", OracleDbType.Int32).Value = file.IdZamestnanec;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
 
         public void ProfilePicture(string username, string pictureUrl)
         {
@@ -2523,24 +2746,42 @@ SELECT
             }
         }
 
+        //bin_obsah
+        public void DeleteFile(int id)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new OracleCommand("DELETE_BALICEK.DELETE_BINARNI_OBSAH", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add("P_ID_OBSAH", OracleDbType.Int32).Value = id;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
         //Hiearchický dotaz
 
-        public List<HierarchieZamestnancu> GetHierarchieZamestnancu()
+        public List<HierarchieZamestnancu> GetHierarchieZamestnancu(int maxLevel = 3)
         {
             var hierarchie = new List<HierarchieZamestnancu>();
 
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                using (var command = new OracleCommand("HIERARCHIE_BALICEK.GET_HIERARCHIE", connection))
+                using (var command = new OracleCommand("GET_HIERARCHIE_ZAMESTNANCU", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    // Parametr OUT - REF CURSOR
-                    var cursor = command.Parameters.Add("RETURN_VALUE", OracleDbType.RefCursor);
-                    cursor.Direction = ParameterDirection.ReturnValue;
+                    // Nastavení výstupního REF CURSOR
+                    command.Parameters.Add("RETURN_VALUE", OracleDbType.RefCursor).Direction = ParameterDirection.ReturnValue;
+
+                    // Nastavení vstupního parametru
+                    command.Parameters.Add("MAX_LEVEL", OracleDbType.Int32).Value = maxLevel;
 
 
+                    // Spuštění příkazu a načtení REF CURSOR
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -2553,7 +2794,10 @@ SELECT
                                 Pozice = reader.GetString(reader.GetOrdinal("POZICE")),
                                 NadrazenyId = reader.IsDBNull(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
                                     ? (int?)null
-                                    : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC"))
+                                    : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC")),
+                                Level = reader.GetInt32(reader.GetOrdinal("LEVEL"))
+
+                               
                             });
                         }
                     }
@@ -2567,47 +2811,75 @@ SELECT
 
 
         //pro systémový katalog
-        public List<string> GetUserTables()
+
+        public List<DbObject> GetDatabaseObjects()
         {
-            var tables = new List<string>();
+            var dbObjects = new List<DbObject>();
+
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                var query = "SELECT TABLE_NAME FROM USER_TABLES";
+                var query = @"
+            SELECT 'TABLE' AS OBJECT_TYPE, TABLE_NAME AS OBJECT_NAME 
+            FROM USER_TABLES
+            UNION ALL
+            SELECT 'VIEW' AS OBJECT_TYPE, VIEW_NAME AS OBJECT_NAME 
+            FROM USER_VIEWS
+            UNION ALL
+            SELECT 'PROCEDURE' AS OBJECT_TYPE, OBJECT_NAME 
+            FROM USER_PROCEDURES
+            UNION ALL
+            SELECT 'FUNCTION' AS OBJECT_TYPE, OBJECT_NAME 
+            FROM USER_OBJECTS WHERE OBJECT_TYPE = 'FUNCTION'";
+
                 using (var command = new OracleCommand(query, connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    using (var reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        dbObjects.Add(new DbObject
                         {
-                            tables.Add(reader.GetString(0));
-                        }
+                            ObjectType = reader.GetString(reader.GetOrdinal("OBJECT_TYPE")),
+                            ObjectName = reader.GetString(reader.GetOrdinal("OBJECT_NAME"))
+                        });
                     }
                 }
             }
-            return tables;
+
+            return dbObjects;
         }
 
-        public List<string> GetUserTriggers()
+        // pro Loggování
+
+        public List<HistoryLog> GetHistoryLogs()
         {
-            var triggers = new List<string>();
+            var logs = new List<HistoryLog>();
+
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                var query = "SELECT TRIGGER_NAME FROM USER_TRIGGERS";
+                var query = "SELECT ID_LOG, TABLE_NAME, OPERATION_TYPE, RECORD_ID, EMPLOYEE_ID, TIMESTAMP, DETAILS FROM HISTORY_LOG";
                 using (var command = new OracleCommand(query, connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    using (var reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        logs.Add(new HistoryLog
                         {
-                            triggers.Add(reader.GetString(0));
-                        }
+                            IdLog = reader.GetInt32(reader.GetOrdinal("ID_LOG")),
+                            TableName = reader.GetString(reader.GetOrdinal("TABLE_NAME")),
+                            OperationType = reader.GetString(reader.GetOrdinal("OPERATION_TYPE")),
+                            RecordId = reader.GetInt32(reader.GetOrdinal("RECORD_ID")),
+                            EmployeeId = reader.IsDBNull(reader.GetOrdinal("EMPLOYEE_ID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("EMPLOYEE_ID")),
+                            Timestamp = reader.GetDateTime(reader.GetOrdinal("TIMESTAMP")),
+                            Details = reader.GetString(reader.GetOrdinal("DETAILS"))
+                        });
                     }
                 }
             }
-            return triggers;
+            return logs;
         }
+
 
 
 

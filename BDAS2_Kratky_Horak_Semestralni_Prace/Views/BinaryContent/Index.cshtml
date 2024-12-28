@@ -1,0 +1,36 @@
+﻿@model List<BinarniObsah>
+
+<h2>Seznam souborů</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Název souboru</th>
+            <th>Typ</th>
+            <th>Přípona</th>
+            <th>Datum nahrání</th>
+            <th>Datum změny</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var file in Model)
+        {
+            <tr>
+                <td>@file.NazevSouboru</td>
+                <td>@file.TypSouboru</td>
+                <td>@file.PriponaSouboru</td>
+                <td>@file.DatumNahrani.ToString("g")</td>
+                <td>@file.DatumModifikace?.ToString("g")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@file.IdObsah" class="btn btn-warning">Upravit</a>
+                    <form asp-action="Delete" asp-route-id="@file.IdObsah" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Smazat</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Upload" class="btn btn-primary">Nahrát nový soubor</a>
+
+

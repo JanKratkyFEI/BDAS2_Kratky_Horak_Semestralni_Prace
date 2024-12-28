@@ -3,12 +3,12 @@
 <h2>Hierarchie Zaměstnanců</h2>
 
 <ul>
-    @foreach (var employee in Model.Where(e => !e.NadrazenyId.HasValue))
+    @foreach (var employee in Model)
     {
-        <li>
-            @employee.Pozice: @employee.Jmeno @employee.Prijmeni
-            @Html.Partial("_RenderSubordinates", Model.Where(e => e.NadrazenyId == employee.IdZamestnanec).ToList())
+        <li style="margin-left:@((employee.Level - 1) * 20)px">
+            <strong>@employee.Pozice:</strong> @employee.Jmeno
+            (Nadřízený: @(Model.FirstOrDefault(e => e.IdZamestnanec == employee.NadrazenyId)?.Jmeno ?? "N/A"))
         </li>
     }
-</ul>
+</ul
 

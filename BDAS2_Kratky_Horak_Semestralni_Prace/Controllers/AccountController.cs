@@ -3,6 +3,7 @@ using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Oracle.ManagedDataAccess.Client;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -33,7 +34,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 // Nastaví emulovanou roli do session
                 HttpContext.Session.SetString("EmulatedRole", emulateRole);
             }
-            
+
 
             // Přesměruje zpět na aktuální stránku
             return Redirect(Request.Headers["Referer"].ToString());
@@ -49,37 +50,38 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             ViewData["CurrentRole"] = role;
         }
 
-
+        //registrace
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        public IActionResult Register (RegisterViewModel model)
+        public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-			if (model.IsExistingEmployee)
-			{
-				return RedirectToAction("RegisterExistingEmployee", model);
-			}
-			else
-			{
-				return RedirectToAction("RegisterNewEmployee", model);
-			}
+            if (model.IsExistingEmployee)
+            {
+                return RedirectToAction("RegisterExistingEmployee", model);
+            }
+            else
+            {
+                return RedirectToAction("RegisterNewEmployee", model);
+            }
 
-		}
+        }
 
+        //obsahuje TRANSAKCI
         [HttpPost]
         public IActionResult RegisterNewEmployee(RegisterViewModel model)
         {
 
             if (!ModelState.IsValid)
             {
-                return View("Register",model);
+                return View("Register", model);
             }
 
             var novyZamestnanec = new Zamestnanec
@@ -90,8 +92,9 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 Password = PasswordHelper.HashPassword(model.Password), // Heslo bude hashované
                 Email = model.Email,
                 Role = "registered", // Výchozí role
-                Plat = 20000, // Výchozí plat (nastavit podle aktuální minimální mzdy)
+                Plat = 18900, // Výchozí plat (nastavit podle aktuální minimální mzdy)
                 DatumZamestnani = DateTime.Now, // Datum registrace jako datum zaměstnání
+                IdRecZamestnanec = 1, //test test
                 Pozice = "Nový kolega", // Výchozí hodnota pro pozici
                 Telefon = "N/A", // Defaultní hodnota, pokud nemáme ve formuláři
                 RodCislo = "N/A", // Defaultní hodnota, pokud není uvedeno
@@ -99,25 +102,54 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 IdAdresa = 1, // Výchozí hodnota
                 IdOddeleni = 1 // Výchozí hodnota
             };
-            try
-            {
-                _connectionString.InsertZamestnanec(novyZamestnanec);
-                return RedirectToAction("Login");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Chyba při registraci: " + ex.Message);
-                System.Diagnostics.Debug.WriteLine("Stack Trace: " + ex.StackTrace);
 
-                ModelState.AddModelError("", "Registrace se nezdařila. Zkuste to prosím znovu.");
-                return View("Register", model);
-            }
+            using (var connection = new OracleConnection(_connectionString.ConnectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Vložení zaměstnance
+                        _connectionString.InsertZamestnanec(novyZamestnanec, connection, transaction);
 
+                        
+                      
+
+                        // Potvrzení transakce
+                        transaction.Commit();
+                        return RedirectToAction("Login");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Vrácení změn v případě chyby
+                        transaction.Rollback();
+                        System.Diagnostics.Debug.WriteLine("Chyba při registraci: " + ex.Message);
+                        ModelState.AddModelError("", "Registrace se nezdařila. Zkuste to prosím znovu.");
+                        return View("Register", model);
+                    }
+                }
             
+
+            //try
+            //{
+            //    _connectionString.InsertZamestnanec(novyZamestnanec);
+            //    return RedirectToAction("Login");
+            //}
+            //catch (Exception ex)
+            //{
+            //    System.Diagnostics.Debug.WriteLine("Chyba při registraci: " + ex.Message);
+            //    System.Diagnostics.Debug.WriteLine("Stack Trace: " + ex.StackTrace);
+
+            //    ModelState.AddModelError("", "Registrace se nezdařila. Zkuste to prosím znovu.");
+            //    return View("Register", model);
         }
 
-      
-        
+
+        }
+
+
+
 
 
         //Simulované metody pro kontrolu a vytvoření uživatele, pak nahradíme triggerem
@@ -134,17 +166,17 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             //Přidej nového uživatele do db
         }
 
-
+        //přihlašování
         [HttpGet]
-            public IActionResult Login()
-            {
-                // Vrátíme prázdný formulář pro přihlášení
-                return View();
-            }
+        public IActionResult Login()
+        {
+            // Vrátíme prázdný formulář pro přihlášení
+            return View();
+        }
 
-            [HttpPost]
-            public IActionResult Login(string username, string password)
-            {
+        [HttpPost]
+        public IActionResult Login(string username, string password)
+        {
             // Základní validace přihlášení
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -170,7 +202,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 ModelState.AddModelError("", "Neplatné přihlašovací údaje.");
                 return View();
             }
-            
+
             // Nastavení session pro přihlášení
             HttpContext.Session.SetString("IsLoggedIn", "true");
             HttpContext.Session.SetString("Username", username);
@@ -182,6 +214,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
         }
 
+        //odhlášení
         [HttpPost]
         public IActionResult Logout()
         {
@@ -189,7 +222,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
-
+        //profil
         public IActionResult Profile()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -204,26 +237,26 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 return NotFound("Zaměstnanec nebyl nalezen.");
             }
 
-            // Nastavení cesty k profilce
-            var profilePicturePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profile_pictures", $"{username}.jpg");
-            zamestnanec.ProfilePictureUrl = System.IO.File.Exists(profilePicturePath)
-                ? $"/images/profile_pictures/{username}.jpg"
-                : "/images/default_pfp.jpg";
+            
+            // Získání ID profilového obrázku z databáze
+            var profilePictureId = _connectionString.GetProfilePictureId(zamestnanec.IdZamestnanec);
+            zamestnanec.ProfilePictureUrl = GetProfilePicture(profilePictureId);
+
 
 
             return View(zamestnanec);
         }
-
+        // profil jiného zaměstnance
         [HttpGet]
         public IActionResult EmployeeProfile(int id)
         {
 
-            var role = GetCurrentRole(); // Použijeme metodu z BaseControlleru
-            if (role != "Admin")
-            {
-                TempData["ErrorMessage"] = "Nemáte dostatečná oprávnění k provedení této akce.";
-                return RedirectToAction("SearchEmploy", "DB");
-            }
+            //var role = GetCurrentRole(); // Použijeme metodu z BaseControlleru
+            //if (role != "Admin")
+            //{
+            //    TempData["ErrorMessage"] = "Nemáte dostatečná oprávnění k provedení této akce.";
+            //    return RedirectToAction("SearchEmploy", "DB");
+            //}
 
             var zamestnanec = _connectionString.GetZamestnanecFromView(id);
             if (zamestnanec == null)
@@ -233,11 +266,11 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
             return View(zamestnanec);
         }
-
+        // vyhledávání jiných zaměstnanců
         [HttpGet]
         public IActionResult Search(string searchQuery)
         {
-           // var employees = _connectionString.SearchZamestnanci(searchQuery ?? string.Empty);
+            // var employees = _connectionString.SearchZamestnanci(searchQuery ?? string.Empty);
             var employees = _connectionString.SearchEmployeees(searchQuery ?? string.Empty);
 
 
@@ -327,7 +360,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
             var role = GetCurrentRole();
             //Kontrola oprávnění - pouze admin může upravovat zaměstnance
-            if ( role != "Admin")
+            if (role != "Admin")
             {
                 return Forbid();
             }
@@ -360,8 +393,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 .Where(e => e.IdZamestnanec != id) // Zamezíme výběru sebe sama
                 .Select(e => new SelectListItem
                 {
-                Value = e.IdZamestnanec.ToString(),
-                Text = $"{e.Jmeno} {e.Prijmeni} ({e.Pozice})"
+                    Value = e.IdZamestnanec.ToString(),
+                    Text = $"{e.Jmeno} {e.Prijmeni} ({e.Pozice})"
                 }).ToList();
 
             return View(viewModel);
@@ -383,8 +416,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                     .Where(e => e.IdZamestnanec != model.IdZamestnanec)
                     .Select(e => new SelectListItem
                     {
-                     Value = e.IdZamestnanec.ToString(),
-                    Text = $"{e.Jmeno} {e.Prijmeni} ({e.Pozice})"
+                        Value = e.IdZamestnanec.ToString(),
+                        Text = $"{e.Jmeno} {e.Prijmeni} ({e.Pozice})"
                     }).ToList();
 
                 return View(model);
@@ -393,7 +426,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             try
             {
                 _connectionString.UpdateEmployeeDetails(model);
-                
+
                 return RedirectToAction("SearchEmploy", "DB");
             }
             catch (Exception ex)
@@ -405,10 +438,19 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
         //hiearchie
         [HttpGet]
-        public IActionResult Hierarchie()
+        public IActionResult Hierarchie(int maxLevel = 3)
         {
-            var hierarchie = _connectionString.GetHierarchieZamestnancu();
-            return View(hierarchie);
+            try
+            {
+                var hierarchie = _connectionString.GetHierarchieZamestnancu(maxLevel);
+                return View(hierarchie);
+            }
+            catch (Exception ex)
+            {
+                // Záznam chyby do logu
+                System.Diagnostics.Debug.WriteLine($"Chyba při získávání hierarchie: {ex.Message}");
+                return StatusCode(500, "Došlo k chybě při získávání hierarchie.");
+            }
         }
 
 
@@ -416,40 +458,97 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult ChangeProfilePicture()
         {
-            var username = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(username))
+            try
             {
-                return RedirectToAction("Login");
-            }
+                var currentEmployeeId = SessionHelper.GetCurrentEmployeeId(HttpContext, _connectionString);
+                var files = _connectionString.GetFilesByEmployeeId(currentEmployeeId);
 
-            return View();
+                return View(files);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Chyba: {ex.Message}");
+                return RedirectToAction("Profile");
+            }
         }
 
         [HttpPost]
-        public IActionResult ChangeProfilePicture(IFormFile profilePicture)
+        public IActionResult ChangeProfilePicture(int selectedFileId)
         {
-            var username = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(username))
+            try
             {
-                return RedirectToAction("Login", "Account");
+                var currentEmployeeId = SessionHelper.GetCurrentEmployeeId(HttpContext, _connectionString);
+
+                // Aktualizace odkazu na profilový obrázek
+                _connectionString.UpdateProfilePicture(currentEmployeeId, selectedFileId);
+
+                return RedirectToAction("Profile");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Chyba: {ex.Message}");
+                return RedirectToAction("Profile");
+            }
+        }
+
+
+        private string GetProfilePicture(int? profilePicId)
+            {
+            System.Diagnostics.Debug.WriteLine($"Generating picture URL for ProfilePictureId={profilePicId}");
+
+            if (!profilePicId.HasValue)
+            {
+                return "/images/default_pfp.jpg"; // Výchozí obrázek
             }
 
-            if (profilePicture != null && profilePicture.Length > 0)
+            var url = Url.Action("GetFile", "BinaryContent", new { id = profilePicId.Value });
+            System.Diagnostics.Debug.WriteLine($"Generated URL: {url}");
+            return url;
+        }
+
+        //metoda pro systémový katalog
+        [HttpGet]
+        public IActionResult DatabaseObjects()
+        {
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "Admin")
             {
-                // Nastavíme název souboru podle uživatelského jména
-                var fileName = $"{username}.jpg";
-
-                // Cesta pro uložení souboru
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profile_pictures", fileName);
-
-                // Uložení souboru
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    profilePicture.CopyTo(stream);
-                }
+                return Forbid();
             }
 
-            return RedirectToAction("Profile");
+            var dbObjects = _connectionString.GetDatabaseObjects();
+            return View(dbObjects);
+        }
+
+        //metoda pro loggování
+
+        [HttpGet]
+        public IActionResult History()
+        {
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "Admin")
+            {
+                return Forbid();
+            }
+
+            var logs = _connectionString.GetHistoryLogs();
+            return View(logs);
+        }
+
+
+        [HttpGet]
+        public IActionResult ViewLogs()
+        {
+            try
+            {
+                var logs = _connectionString.GetHistoryLogs();
+                return View(logs);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Chyba při načítání logů: {ex.Message}");
+                return View(new List<HistoryLog>()); // V případě chyby vrací prázdný seznam
+            }
         }
 
 
@@ -458,3 +557,4 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
     }
 }
+

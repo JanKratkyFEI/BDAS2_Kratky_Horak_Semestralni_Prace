@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
     public class BaseController : Controller
     {
+        
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -24,6 +26,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return HttpContext.Session.GetString("EmulatedRole")
                 ?? HttpContext.Session.GetString("Role");
         }
+
+       
     }
 
 }
