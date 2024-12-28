@@ -11,6 +11,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
         public string Nazev { get; set; }
         public int IdZeme { get; set; } //Každá obec patří jedné zemi
 
+        [ValidateNever]
         public string ZemeNazev { get; set; } //ID_ZEME translated to string
 
         //Navigační vlastnosti

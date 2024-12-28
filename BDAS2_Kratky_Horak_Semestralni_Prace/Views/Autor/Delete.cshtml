@@ -5,7 +5,7 @@
 <p>Opravdu chcete smazat autora: <strong>@Model.Jmeno @Model.Prijmeni</strong>?</p>
 
 <form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="IdAutor" />
+    <input type="hidden" name="id" value="@Model.IdAutor" />
     <button type="submit" class="btn btn-danger">Ano, smazat</button>
     <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
 </form>

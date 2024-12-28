@@ -69,7 +69,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View(autor);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
             _connectionString.DeleteAutor(id);

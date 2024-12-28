@@ -12,7 +12,7 @@
     </dl>
 
     <form asp-action="DeleteConfirmed" method="post">
-        <input type="hidden" asp-for="IdZeme" />
+        <input type="hidden" name="id" value="@Model.IdZeme" />
         <button type="submit" class="btn btn-danger">Smazat</button>
         <a asp-action="Index" class="btn btn-secondary">Zpět</a>
     </form>

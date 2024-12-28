@@ -8,7 +8,7 @@
         <dd class="col-sm-9">@Model.Nazev</dd>
     </dl>
     <form asp-action="DeleteConfirmed" method="post">
-        <input type="hidden" name="IdMaterial" value="@Model.IdMaterial" />
+        <input type="hidden" name="id" value="@Model.IdMaterial" />
         <button type="submit" class="btn btn-danger">Smazat</button>
         <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
     </form>

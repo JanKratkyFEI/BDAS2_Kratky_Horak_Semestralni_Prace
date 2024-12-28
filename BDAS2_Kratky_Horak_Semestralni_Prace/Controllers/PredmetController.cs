@@ -527,6 +527,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult NonDisplayedItems()
+        {
+            var nonDisplayedItems = _connectionString.GetNonDisplayedItems();
+            return View(nonDisplayedItems);
+        }
 
     }
 

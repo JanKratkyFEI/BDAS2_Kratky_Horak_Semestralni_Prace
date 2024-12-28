@@ -69,5 +69,33 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View(sbirka);
         }
 
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var sbirka = _connectionString.GetSbirkaById(id); // Získání sbírky podle ID
+            if (sbirka == null)
+            {
+                return NotFound("Sbírka nebyla nalezena.");
+            }
+
+            return View(sbirka); // Vrací potvrzovací stránku s detailem sbírky
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            try
+            {
+                _connectionString.DeleteSbirka(id); // Volání metody pro mazání
+                return RedirectToAction("Index"); // Přesměrování zpět na seznam sbírek
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Chyba při mazání sbírky: {ex.Message}");
+                return RedirectToAction("Delete", new { id = id }); // Vrácení na potvrzovací stránku
+            }
+        }
+
+
     }
 }

@@ -4,8 +4,8 @@
 
 <p>Opravdu chcete smazat obec <strong>@Model.Nazev</strong>?</p>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="IdObec" />
+<form asp-controller="Obec" asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.IdObec" />
     <button type="submit" class="btn btn-danger">Smazat</button>
     <a asp-controller="Obec" asp-action="Index" class="btn btn-secondary">Zpět</a>
 </form>

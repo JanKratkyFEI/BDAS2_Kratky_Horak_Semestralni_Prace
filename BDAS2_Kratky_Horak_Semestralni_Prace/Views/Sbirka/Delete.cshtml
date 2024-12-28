@@ -12,7 +12,7 @@
 </div>
 
 <form asp-controller="Sbirka" asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="IdSbirka" />
+    <input type="hidden" name="id" value="@Model.IdSbirka" />
     <button type="submit" class="btn btn-danger">Smazat</button>
     <a asp-controller="Sbirka" asp-action="Index" class="btn btn-secondary">Zpět</a>
 </form>

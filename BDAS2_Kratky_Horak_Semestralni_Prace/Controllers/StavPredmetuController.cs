@@ -22,12 +22,18 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+           
+             
             return View();
         }
 
         [HttpPost]
         public IActionResult Create(StavPredmetu stav)
         {
+            if (GetCurrentRole() != "Admin")
+            {
+                return Forbid();
+            }
             if (ModelState.IsValid)
             {
                 _connectionString.AddStavPredmetu(stav);
@@ -39,6 +45,11 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
+
+            if (GetCurrentRole() != "Admin")
+            {
+                return Forbid();
+            }
             var stav = _connectionString.GetStavPredmetuById(id);
             if (stav == null)
             {
@@ -50,6 +61,11 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpPost]
         public IActionResult Edit(StavPredmetu stav)
         {
+            if (GetCurrentRole() != "Admin")
+            {
+                return Forbid();
+            }
+
             if (ModelState.IsValid)
             {
                 _connectionString.UpdateStavPredmetu(stav);
@@ -61,6 +77,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
+            if (GetCurrentRole() != "Admin")
+            {
+                return Forbid();
+            }
+
+
             var stav = _connectionString.GetStavPredmetuById(id);
             if (stav == null)
             {
@@ -69,9 +91,13 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View(stav);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
+            if (GetCurrentRole() != "Admin")
+            {
+                return Forbid();
+            }
             _connectionString.DeleteStavPredmetu(id);
             return RedirectToAction("Index");
         }

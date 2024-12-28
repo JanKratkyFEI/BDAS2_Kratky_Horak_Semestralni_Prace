@@ -84,6 +84,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 return View("Register", model);
             }
 
+            //očištění
+            model.Username = model.Username.Trim();
+            model.Email = model.Email.Trim();
+            model.Jmeno = model.Jmeno.Trim();
+            model.Prijmeni = model.Prijmeni.Trim();
+
             var novyZamestnanec = new Zamestnanec
             {
                 Jmeno = model.Jmeno,
@@ -183,19 +189,17 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 ModelState.AddModelError("", "Uživatelské jméno a heslo jsou povinné.");
                 return View();
             }
+
             //načtení usera z db dle username
             var user = _connectionString.GetZamestnanecByUsername(username);
-            if (user == null)
+
+            if (user == null || string.IsNullOrEmpty(user.Password))
             {
                 ModelState.AddModelError("", "Neplatné přihlašovací údaje.");
                 return View();
             }
 
-            if (string.IsNullOrEmpty(user.Password))
-            {
-                ModelState.AddModelError("", "Neplatné přihlašovací údaje.");
-                return View();
-            }
+          
             // Ověření hesla - porovnání hash hesla
             if (!PasswordHelper.VerifyPassword(password, user.Password))
             {
@@ -209,10 +213,18 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             HttpContext.Session.SetString("Role", user.Role); //aktuální role
             HttpContext.Session.SetString("OriginalRole", user.Role); //Původní role
 
+
+          
+
             // Přesměrování na hlavní stránku po úspěšném přihlášení
             return RedirectToAction("Index", "Home");
 
         }
+
+
+
+      
+
 
         //odhlášení
         [HttpPost]

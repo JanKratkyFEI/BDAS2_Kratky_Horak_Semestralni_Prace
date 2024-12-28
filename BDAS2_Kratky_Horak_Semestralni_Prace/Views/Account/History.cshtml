@@ -4,25 +4,23 @@
 <div class="scrollable">
 <table class="table">
     <thead>
-        <tr>
-            <th>Čas</th>
-            <th>Tabulka</th>
-            <th>Operace</th>
-            <th>Záznam ID</th>
-            <th>Detail</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var log in Model)
-        {
             <tr>
-                <td>@log.Timestamp</td>
-                <td>@log.TableName</td>
-                <td>@log.OperationType</td>
-                <td>@log.RecordId</td>
-                <td>@log.Details</td>
+                <th>Tabulka</th>
+                <th>Typ operace</th>
+                <th>Uživatel</th>
+                <th>Čas</th>
             </tr>
-        }
+        </thead>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.TableName</td>
+                    <td>@log.OperationType</td>
+                    
+                    <td>@log.Timestamp.ToString("g")</td>
+                </tr>
+            }
     </tbody>
 </table>
 </div>

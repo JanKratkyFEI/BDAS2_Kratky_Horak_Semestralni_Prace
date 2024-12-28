@@ -222,7 +222,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             {
                 connection.Open();
 
-                using (var command = new OracleCommand("INSERT_OBCE", connection))
+                using (var command = new OracleCommand("INSERT_BALICEK.INSERT_OBEC", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
@@ -287,7 +287,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
             {
                 connection.Open();
 
-                using (var command = new OracleCommand("INSERT_AUTOR", connection))
+                using (var command = new OracleCommand("INSERT_BALICEK.INSERT_AUTOR", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.Add(new OracleParameter("p_jmeno", autor.Jmeno));
@@ -2602,12 +2602,18 @@ SELECT
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                
+                System.Diagnostics.Debug.WriteLine($"Attempting to delete material with ID: {id}");
+
+
+
 
                 using (var command = new OracleCommand("DELETE_BALICEK.DELETE_MATERIAL", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.Add(new OracleParameter("p_id_material", id));
+
+                    System.Diagnostics.Debug.WriteLine($"Executing command: {command.CommandText}");
+
                     command.ExecuteNonQuery();
                 }
             }
@@ -2858,7 +2864,7 @@ SELECT
             using (var connection = new OracleConnection(_connectionString))
             {
                 connection.Open();
-                var query = "SELECT ID_LOG, TABLE_NAME, OPERATION_TYPE, RECORD_ID, EMPLOYEE_ID, TIMESTAMP, DETAILS FROM HISTORY_LOG";
+                var query = "SELECT ID_LOG, TABLE_NAME, OPERATION_TYPE, TIMESTAMP FROM HISTORY_LOG";
                 using (var command = new OracleCommand(query, connection))
                 using (var reader = command.ExecuteReader())
                 {
@@ -2869,16 +2875,55 @@ SELECT
                             IdLog = reader.GetInt32(reader.GetOrdinal("ID_LOG")),
                             TableName = reader.GetString(reader.GetOrdinal("TABLE_NAME")),
                             OperationType = reader.GetString(reader.GetOrdinal("OPERATION_TYPE")),
-                            RecordId = reader.GetInt32(reader.GetOrdinal("RECORD_ID")),
-                            EmployeeId = reader.IsDBNull(reader.GetOrdinal("EMPLOYEE_ID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("EMPLOYEE_ID")),
-                            Timestamp = reader.GetDateTime(reader.GetOrdinal("TIMESTAMP")),
-                            Details = reader.GetString(reader.GetOrdinal("DETAILS"))
+                            Timestamp = reader.GetDateTime(reader.GetOrdinal("TIMESTAMP"))
                         });
                     }
                 }
             }
             return logs;
         }
+
+        // Kursor
+
+        public List<NonDisplayedItemViewModel> GetNonDisplayedItems()
+        {
+            var items = new List<NonDisplayedItemViewModel>();
+
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("LOGNONDISPLAYEDITEMS", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Výstupní parametr pro kurzor
+                    var cursorParam = new OracleParameter
+                    {
+                        ParameterName = "p_cursor",
+                        OracleDbType = OracleDbType.RefCursor,
+                        Direction = ParameterDirection.Output
+                    };
+                    command.Parameters.Add(cursorParam);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            items.Add(new NonDisplayedItemViewModel
+                            {
+                                IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET")),
+                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                                Stav = reader.GetString(reader.GetOrdinal("STAV"))
+                            });
+                        }
+                    }
+                }
+            }
+            return items;
+        }
+
+
 
 
 

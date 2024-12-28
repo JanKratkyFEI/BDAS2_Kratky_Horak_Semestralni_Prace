@@ -69,7 +69,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View(muzeum);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
             _connectionString.DeleteMuzeum(id);

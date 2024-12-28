@@ -5,7 +5,7 @@
 <p>Opravdu chcete smazat oddělení: <strong>@Model.Nazev</strong>?</p>
 
 <form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="IdOddeleni" />
+    <input type="hidden" name="id" value="@Model.IdOddeleni" />
     <button type="submit" class="btn btn-danger">Ano, smazat</button>
     <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
 </form>

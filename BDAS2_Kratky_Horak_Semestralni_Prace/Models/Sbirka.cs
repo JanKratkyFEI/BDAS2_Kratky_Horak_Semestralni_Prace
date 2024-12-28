@@ -14,7 +14,8 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
 
         //FK
         public int IdMuzeum { get; set; } //Každá sbírka patří do muzea
-        
+
+        [ValidateNever]
         public string MuzeumNazev {  get; set; }
         //Navigační vlastnosti
         [ValidateNever]

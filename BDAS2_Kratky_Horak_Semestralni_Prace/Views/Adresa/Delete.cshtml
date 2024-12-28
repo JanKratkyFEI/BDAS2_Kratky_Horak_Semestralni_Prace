@@ -12,7 +12,8 @@
 </div>
 
 <form asp-controller="Adresa" asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="IdAdresa" />
+   
+    <input type="hidden" name="id" value="@Model.IdAdresa" />
     <button type="submit" class="btn btn-danger">Ano, odstranit</button>
     <a asp-action="Index" class="btn btn-secondary">Zrušit</a>
 </form>
