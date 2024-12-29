@@ -1,0 +1,20 @@
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zamestnanec
+
+<div class="container mt-4">
+    <h2>Potvrzení smazání</h2>
+    <p>Opravdu chcete smazat tohoto zaměstnance?</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Jméno</dt>
+        <dd class="col-sm-9">@Model.Jmeno @Model.Prijmeni</dd>
+
+        <dt class="col-sm-3">Role</dt>
+        <dd class="col-sm-9">@Model.Role</dd>
+    </dl>
+
+    <form method="post" asp-action="DeleteConfirmed">
+        <input type="hidden" name="id" value="@Model.IdZamestnanec" />
+        <button type="submit" class="btn btn-danger">Ano, smazat</button>
+        <a asp-action="Profile" asp-route-id="@Model.IdZamestnanec" class="btn btn-secondary">Zpět</a>
+    </form>
+</div>

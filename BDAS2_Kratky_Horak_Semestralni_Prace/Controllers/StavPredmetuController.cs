@@ -1,5 +1,7 @@
 ﻿using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Reflection;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 {
@@ -22,7 +24,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-           
+           ViewBag.Stavy = new SelectList(new List<string> { "uskladněno", "vystavěno", "vypůjčeno" });
              
             return View();
         }
@@ -30,12 +32,37 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
         [HttpPost]
         public IActionResult Create(StavPredmetu stav)
         {
+            
             if (GetCurrentRole() != "Admin")
             {
                 return Forbid();
             }
+
+           
+            System.Diagnostics.Debug.WriteLine($"ViewBag.Stavy: {string.Join(", ", (ViewBag.Stavy as SelectList).Select(x => x.Text))}");
+            System.Diagnostics.Debug.WriteLine($"Stav: {stav.Stav}");
+            System.Diagnostics.Debug.WriteLine($"Začátek: {stav.ZacatekStav}");
+            System.Diagnostics.Debug.WriteLine($"Konec: {stav.KonecStav}");
+
+            if (!ModelState.IsValid)
+            {
+                
+                ViewBag.Stavy = new SelectList(new List<string> { "uskladněno", "vystavěno", "vypůjčeno" });
+               
+
+                return View(stav);
+            }
+
             if (ModelState.IsValid)
             {
+
+                if (stav.Stav == "vypůjčeno" && (stav.KonecStav - stav.ZacatekStav).TotalDays > 90)
+                {
+                    ModelState.AddModelError("", "Doba vypůjčení nesmí být delší než 3 měsíce.");
+                    ViewBag.Stavy = new SelectList(new List<string> { "uskladněno", "vystavěno", "vypůjčeno" });
+
+                    return View(stav);
+                }
                 _connectionString.AddStavPredmetu(stav);
                 return RedirectToAction("Index");
             }
@@ -55,6 +82,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Stavy = new SelectList(new List<string> { "uskladněno", "vystavěno", "vypůjčeno" });
             return View(stav);
         }
 
@@ -65,13 +93,27 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             {
                 return Forbid();
             }
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Stavy = new SelectList(new List<string> { "uskladněno", "vystavěno", "vypůjčeno" });
 
-            if (ModelState.IsValid)
+                return View(stav);
+            }
+            try
             {
                 _connectionString.UpdateStavPredmetu(stav);
                 return RedirectToAction("Index");
             }
-            return View(stav);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Chyba při úpravě stavu: {ex.Message}");
+                ViewBag.Stavy = new SelectList(new List<string> { "uskladněno", "vystavěno", "vypůjčeno" });
+                return View(stav);
+            }
+
+
+           
+            
         }
 
         [HttpGet]

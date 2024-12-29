@@ -1,5 +1,11 @@
 ﻿@model IEnumerable<BDAS2_Kratky_Horak_Semestralni_Prace.Models.Muzeum>
 
+<div>
+    <label for="safetyStatus">Bezpečnost země:</label>
+    <input id="safetyStatus" type="text" class="form-control" readonly />
+</div>
+
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Seznam Muzeí</h2>
     <a asp-action="Create" class="btn btn-primary">Přidat nové muzeum</a>
@@ -20,10 +26,44 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@muzeum.IdMuzeum" class="btn btn-warning btn-sm">Upravit</a>
                         <a asp-action="Delete" asp-route-id="@muzeum.IdMuzeum" class="btn btn-danger btn-sm">Smazat</a>
+                        <button class="btn btn-info" onclick="checkSafety(@muzeum.IdMuzeum)">Ověřit bezpečnost</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+@section Scripts {
+    <script>
+        function checkSafety(idMuzeum) {
+            console.log("Kontroluji bezpečnost pro muzeum ID:", idMuzeum);
+
+            fetch(`/Muzeum/CheckSafety?idMuzeum=${idMuzeum}`)
+                .then(response => response.text()) // Čtení jako čistý text
+                .then(data => {
+                    console.log("Odpověď ze serveru:", data);
+                    const safetyStatusInput = document.getElementById("safetyStatus");
+
+                    if (data === "BEZPEČNÁ") {
+                        safetyStatusInput.value = "BEZPEČNÁ";
+                    } else if (data === "NEBEZPEČNÁ") {
+                        safetyStatusInput.value = "NEBEZPEČNÁ";
+                    } else {
+                        safetyStatusInput.value = "Nelze ověřit bezpečnost.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Chyba při ověřování bezpečnosti:", error);
+                    const safetyStatusInput = document.getElementById("safetyStatus");
+                    safetyStatusInput.value = "Chyba při ověřování.";
+                });
+        }
+
+
+
+
+
+
+    </script>
+}
 

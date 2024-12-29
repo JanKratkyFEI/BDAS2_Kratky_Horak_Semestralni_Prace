@@ -90,6 +90,15 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             model.Jmeno = model.Jmeno.Trim();
             model.Prijmeni = model.Prijmeni.Trim();
 
+            //validace emailu
+            var emailIsValid = _connectionString.IsEmailValid(model.Email);
+            if (!emailIsValid)
+            {
+                ModelState.AddModelError("Email", "Zadaný e-mail není platný.");
+                return View("Register", model);
+            }
+
+
             var novyZamestnanec = new Zamestnanec
             {
                 Jmeno = model.Jmeno,
@@ -119,9 +128,6 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                         // Vložení zaměstnance
                         _connectionString.InsertZamestnanec(novyZamestnanec, connection, transaction);
 
-                        
-                      
-
                         // Potvrzení transakce
                         transaction.Commit();
                         return RedirectToAction("Login");
@@ -130,7 +136,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                     {
                         // Vrácení změn v případě chyby
                         transaction.Rollback();
-                        System.Diagnostics.Debug.WriteLine("Chyba při registraci: " + ex.Message);
+                        
                         ModelState.AddModelError("", "Registrace se nezdařila. Zkuste to prosím znovu.");
                         return View("Register", model);
                     }
@@ -341,23 +347,34 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
 
                 return View(model);
             }
+
+
+           
+
             try
             {
+                var emailIsValid = _connectionString.IsEmailValid(model.Email);
+                if (!emailIsValid)
+                {
+                    ModelState.AddModelError("Email", "Zadaný e-mail není platný.");
+                    ViewBag.AdresyList = _connectionString.GetAllAdresa()
+                        .Select(a => new SelectListItem
+                        {
+                            Value = a.IdAdresa.ToString(),
+                            Text = $"{a.Ulice}, {a.PSC}, {a.ObecNazev}"
+                        }).ToList();
+
+                    return View(model);
+                }
                 //_connectionString.UpdateZamestnanec(zamestnanec);
                 _connectionString.UpdateZamestnanecOsobniUdaje(model);
                 return RedirectToAction("Profile");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Chyba při aktualizaci profilu:" + ex.Message);
                 ModelState.AddModelError("", "Aktualizace se nezdařila. Zkuste to prosím znovu.");
 
-                ViewBag.AdresyList = _connectionString.GetAllAdresa()
-            .Select(a => new SelectListItem
-            {
-                Value = a.IdAdresa.ToString(),
-                Text = $"{a.Ulice}, {a.PSC}, {a.ObecNazev}"
-            }).ToList();
+             
 
                 return View(model);
             }
@@ -562,6 +579,48 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                 return View(new List<HistoryLog>()); // V případě chyby vrací prázdný seznam
             }
         }
+
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var employee = _connectionString.GetZamestnanecById(id); // Získání zaměstnance podle ID
+            if (employee == null)
+            {
+                return NotFound("Zaměstnanec nebyl nalezen.");
+            }
+
+            return View(employee); // Zobrazí potvrzovací stránku s detailem zaměstnance
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            try
+            {
+                var currentUserRole = HttpContext.Session.GetString("Role");
+                if (currentUserRole != "Admin")
+                {
+                    return Forbid(); // Pouze admin může mazat zaměstnance
+                }
+
+                _connectionString.DeleteZamestnanec(id); // Smazání zaměstnance v databázi
+                return RedirectToAction("Index"); // Přesměrování zpět na seznam zaměstnanců
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Došlo k chybě při mazání: {ex.Message}");
+                return RedirectToAction("Delete", new { id });
+            }
+        }
+
+        // Pomocná metoda pro získání ID aktuálního uživatele
+        private int GetCurrentUserId()
+        {
+            return int.Parse(HttpContext.Session.GetString("UserId"));
+        }
+
+
 
 
 

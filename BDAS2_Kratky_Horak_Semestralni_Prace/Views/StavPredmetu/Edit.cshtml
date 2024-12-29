@@ -1,5 +1,37 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.StavPredmetu
+
+<div class="container mt-4">
+    <h2>Upravit stav předmětu</h2>
+
+    <!-- Upozornění na vypršený stav -->
+    @if (Model.Stav == "vypůjčeno" && Model.KonecStav < DateTime.Now)
+    {
+        <div class="alert alert-warning">
+            Stav tohoto předmětu vypršel. Prosím, potvrďte, že byl vrácen, a upravte stav.
+        </div>
+    }
+
+    <form method="post" asp-action="Edit">
+        <div class="form-group">
+            <label for="Stav">Stav</label>
+            <select asp-for="Stav" class="form-control" asp-items="ViewBag.Stavy"></select>
+            <span asp-validation-for="Stav" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="ZacatekStav">Začátek stavu</label>
+            <input asp-for="ZacatekStav" type="date" class="form-control" />
+            <span asp-validation-for="ZacatekStav" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="KonecStav">Konec stavu</label>
+            <input asp-for="KonecStav" type="date" class="form-control" />
+            <span asp-validation-for="KonecStav" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Uložit</button>
+        <a asp-action="Index" class="btn btn-secondary">Zpět</a>
+    </form>
+</div>
+

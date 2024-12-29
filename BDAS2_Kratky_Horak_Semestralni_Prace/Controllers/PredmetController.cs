@@ -383,9 +383,65 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             return View(socha);
         }
 
+        //[HttpPost]
+        //public IActionResult EditSocha(Socha socha)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        foreach (var state in ModelState)
+        //        {
+        //            foreach (var error in state.Value.Errors)
+        //            {
+        //                Console.WriteLine($"Chyba v {state.Key}: {error.ErrorMessage}");
+        //            }
+        //        }
+
+        //        // Naplnění ViewBag při validaci
+        //        ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+        //            .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+        //        ViewBag.Sbirky = _connectionString.GetAllSbirky()
+        //            .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+        //        return View(socha);
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //    {
+        //        // Aktualizace sochy v databázi
+        //        _connectionString.UpdateSocha(socha);
+
+        //        return RedirectToAction("Index"); // Přesměrování na seznam
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ModelState.AddModelError("", "Došlo k chybě při ukládání změn: " + ex.Message);
+
+        //        // Naplnění ViewBag při chybě
+        //        ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+        //            .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+        //        ViewBag.Sbirky = _connectionString.GetAllSbirky()
+        //            .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+        //        return View(socha);
+        //    }
+
+        //    }
+
+
+        //}
+
         [HttpPost]
         public IActionResult EditSocha(Socha socha)
         {
+            // Naplnění ViewBag před validací, aby bylo dostupné ve všech případech
+            ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
+                .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
+            ViewBag.Sbirky = _connectionString.GetAllSbirky()
+                .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
+
+            // Validace modelu
             if (!ModelState.IsValid)
             {
                 foreach (var state in ModelState)
@@ -395,12 +451,6 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
                         Console.WriteLine($"Chyba v {state.Key}: {error.ErrorMessage}");
                     }
                 }
-
-                // Naplnění ViewBag při validaci
-                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
-                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
-                ViewBag.Sbirky = _connectionString.GetAllSbirky()
-                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
 
                 return View(socha);
             }
@@ -414,17 +464,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             }
             catch (Exception ex)
             {
+                // Zpracování výjimky
                 ModelState.AddModelError("", "Došlo k chybě při ukládání změn: " + ex.Message);
-
-                // Naplnění ViewBag při chybě
-                ViewBag.Stavy = _connectionString.GetAllStavyPredmetu()
-                    .Select(s => new SelectListItem { Value = s.IdStav.ToString(), Text = s.Stav }).ToList();
-                ViewBag.Sbirky = _connectionString.GetAllSbirky()
-                    .Select(s => new SelectListItem { Value = s.IdSbirka.ToString(), Text = s.Nazev }).ToList();
-
                 return View(socha);
             }
         }
+
 
 
 

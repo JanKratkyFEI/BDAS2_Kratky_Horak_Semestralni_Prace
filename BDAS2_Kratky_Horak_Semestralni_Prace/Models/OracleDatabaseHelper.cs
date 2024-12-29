@@ -158,7 +158,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                     command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = fotografie.IdSbirka;
                     command.Parameters.Add("p_zanr", OracleDbType.Varchar2).Value = fotografie.Zanr ?? (object)DBNull.Value; ;
                     command.Parameters.Add("p_licence", OracleDbType.Varchar2).Value = fotografie.Licence ?? (object)DBNull.Value;
-                    
+
                     command.ExecuteNonQuery();
                 }
             }
@@ -177,7 +177,7 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Models
                     command.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = obraz.Nazev ?? (object)DBNull.Value;
                     command.Parameters.Add("p_stari", OracleDbType.Int32).Value = obraz.Stari;
                     command.Parameters.Add("p_popis", OracleDbType.Varchar2).Value = obraz.Popis ?? (object)DBNull.Value;
-                   // command.Parameters.Add("p_typ", OracleDbType.Varchar2).Value = obraz.Typ ?? (object)DBNull.Value;
+                    // command.Parameters.Add("p_typ", OracleDbType.Varchar2).Value = obraz.Typ ?? (object)DBNull.Value;
                     command.Parameters.Add("p_id_stav", OracleDbType.Int32).Value = obraz.IdStav;
                     command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = obraz.IdSbirka;
                     command.Parameters.Add("p_umelecky_styl", OracleDbType.Varchar2).Value = obraz.UmeleckyStyl ?? (object)DBNull.Value;
@@ -1649,33 +1649,33 @@ SELECT
 
         public void InsertZamestnanec(Zamestnanec zamestnanec, OracleConnection connection, OracleTransaction transaction = null)
         {
-            
-               // connection.Open();
-                using (var command = new OracleCommand("INSERT_BALICEK.INSERT_ZAMESTNANEC", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Transaction = transaction;
 
-                    command.Parameters.Add("p_pozice", OracleDbType.Varchar2).Value = zamestnanec.Pozice ?? (object)DBNull.Value;
-                    command.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
-                    command.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
-                    command.Parameters.Add("p_email", OracleDbType.Varchar2).Value = zamestnanec.Email;
-                    command.Parameters.Add("p_telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon ?? (object)DBNull.Value;
-                    command.Parameters.Add("p_rodne_cislo", OracleDbType.Varchar2).Value = zamestnanec.RodCislo ?? (object)DBNull.Value;
-                    command.Parameters.Add("p_datum_zamestnani", OracleDbType.Date).Value = zamestnanec.DatumZamestnani;
-                    command.Parameters.Add("p_typ_smlouva", OracleDbType.Varchar2).Value = zamestnanec.TypSmlouva ?? (object)DBNull.Value;
-                    command.Parameters.Add("p_plat", OracleDbType.Decimal).Value = zamestnanec.Plat;
-                    command.Parameters.Add("p_pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi.HasValue ? (object)zamestnanec.Pohlavi.Value : DBNull.Value; // Změněno na Int32
-                    command.Parameters.Add("p_id_adresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
-                    command.Parameters.Add("p_id_oddeleni", OracleDbType.Int32).Value = zamestnanec.IdOddeleni;
-                    command.Parameters.Add("p_id_rec_zamestnanec", OracleDbType.Int32).Value = zamestnanec.IdRecZamestnanec.HasValue ? (object)zamestnanec.IdRecZamestnanec.Value : DBNull.Value;
-                    command.Parameters.Add("p_username", OracleDbType.Varchar2).Value = zamestnanec.Username;
-                    command.Parameters.Add("p_password", OracleDbType.Varchar2).Value = zamestnanec.Password;
-                    command.Parameters.Add("p_role", OracleDbType.Varchar2).Value = zamestnanec.Role;
+            // connection.Open();
+            using (var command = new OracleCommand("INSERT_BALICEK.INSERT_ZAMESTNANEC", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Transaction = transaction;
 
-                    command.ExecuteNonQuery();
-                }
-            
+                command.Parameters.Add("p_pozice", OracleDbType.Varchar2).Value = zamestnanec.Pozice ?? (object)DBNull.Value;
+                command.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = zamestnanec.Jmeno;
+                command.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = zamestnanec.Prijmeni;
+                command.Parameters.Add("p_email", OracleDbType.Varchar2).Value = zamestnanec.Email;
+                command.Parameters.Add("p_telefon", OracleDbType.Varchar2).Value = zamestnanec.Telefon ?? (object)DBNull.Value;
+                command.Parameters.Add("p_rodne_cislo", OracleDbType.Varchar2).Value = zamestnanec.RodCislo ?? (object)DBNull.Value;
+                command.Parameters.Add("p_datum_zamestnani", OracleDbType.Date).Value = zamestnanec.DatumZamestnani;
+                command.Parameters.Add("p_typ_smlouva", OracleDbType.Varchar2).Value = zamestnanec.TypSmlouva ?? (object)DBNull.Value;
+                command.Parameters.Add("p_plat", OracleDbType.Decimal).Value = zamestnanec.Plat;
+                command.Parameters.Add("p_pohlavi", OracleDbType.Int32).Value = zamestnanec.Pohlavi.HasValue ? (object)zamestnanec.Pohlavi.Value : DBNull.Value; // Změněno na Int32
+                command.Parameters.Add("p_id_adresa", OracleDbType.Int32).Value = zamestnanec.IdAdresa;
+                command.Parameters.Add("p_id_oddeleni", OracleDbType.Int32).Value = zamestnanec.IdOddeleni;
+                command.Parameters.Add("p_id_rec_zamestnanec", OracleDbType.Int32).Value = zamestnanec.IdRecZamestnanec.HasValue ? (object)zamestnanec.IdRecZamestnanec.Value : DBNull.Value;
+                command.Parameters.Add("p_username", OracleDbType.Varchar2).Value = zamestnanec.Username;
+                command.Parameters.Add("p_password", OracleDbType.Varchar2).Value = zamestnanec.Password;
+                command.Parameters.Add("p_role", OracleDbType.Varchar2).Value = zamestnanec.Role;
+
+                command.ExecuteNonQuery();
+            }
+
         }
 
         public Sbirka GetSbirkaById(int id)
@@ -2081,7 +2081,7 @@ SELECT
                     command.Parameters.Add("p_id_sbirka", OracleDbType.Int32).Value = socha.IdSbirka;
                     command.Parameters.Add("p_vaha", OracleDbType.Decimal).Value = socha.Vaha;
                     command.Parameters.Add("p_technika_tvorby", OracleDbType.Varchar2).Value = socha.TechnikaTvorby ?? "Unknown Technique";
-                    
+
 
                     command.ExecuteNonQuery();
                 }
@@ -2120,7 +2120,7 @@ SELECT
             {
                 connection.Open();
 
-                using( var command = new OracleCommand("UPDATE_BALICEK.UPDATE_OBRAZ", connection))
+                using (var command = new OracleCommand("UPDATE_BALICEK.UPDATE_OBRAZ", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.Add("p_id_predmet", OracleDbType.Int32).Value = obraz.IdPredmet;
@@ -2293,7 +2293,7 @@ SELECT
             }
         }
 
-        
+
 
 
         public void UpdateZamestnanec(Zamestnanec zamestnanec)
@@ -2618,6 +2618,36 @@ SELECT
                 }
             }
         }
+
+        public void DeleteZamestnanec(int id)
+        {
+            using (var connection = new OracleConnection(_connectionString))
+            {
+                connection.Open();
+
+                using (var command = new OracleCommand("DELETE_ZAMESTNANEC", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Předání ID zaměstnance jako vstupního parametru
+                    command.Parameters.Add(new OracleParameter("p_id_zamestnanec", OracleDbType.Int32)).Value = id;
+
+
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        Console.WriteLine($"Zaměstnanec s ID {id} byl úspěšně smazán.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Chyba při mazání zaměstnance s ID {id}: {ex.Message}");
+                        throw; // Přesměrování chyby zpět do volající metody
+                    }
+                }
+            }
+        }
+
         public void DeleteZeme(int id)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -2693,7 +2723,7 @@ SELECT
             }
 
         }
-        
+
         public void DeleteObec(int id)
         {
             using (var connection = new OracleConnection(_connectionString))
@@ -2803,7 +2833,7 @@ SELECT
                                     : reader.GetInt32(reader.GetOrdinal("ID_REC_ZAMESTNANEC")),
                                 Level = reader.GetInt32(reader.GetOrdinal("LEVEL"))
 
-                               
+
                             });
                         }
                     }
@@ -2826,11 +2856,14 @@ SELECT
             {
                 connection.Open();
                 var query = @"
-            SELECT 'TABLE' AS OBJECT_TYPE, TABLE_NAME AS OBJECT_NAME 
+           SELECT 'TABLE' AS OBJECT_TYPE, TABLE_NAME AS OBJECT_NAME 
             FROM USER_TABLES
             UNION ALL
             SELECT 'VIEW' AS OBJECT_TYPE, VIEW_NAME AS OBJECT_NAME 
             FROM USER_VIEWS
+            UNION ALL
+            SELECT 'TRIGGER' AS OBJECT_TYPE, TRIGGER_NAME AS OBJECT_NAME 
+            FROM USER_TRIGGERS
             UNION ALL
             SELECT 'PROCEDURE' AS OBJECT_TYPE, OBJECT_NAME 
             FROM USER_PROCEDURES
@@ -2848,115 +2881,180 @@ SELECT
                             ObjectType = reader.GetString(reader.GetOrdinal("OBJECT_TYPE")),
                             ObjectName = reader.GetString(reader.GetOrdinal("OBJECT_NAME"))
                         });
-                    }
-                }
-            }
+        }
+    }
+}
 
-            return dbObjects;
+return dbObjects;
         }
 
         // pro Loggování
 
         public List<HistoryLog> GetHistoryLogs()
-        {
-            var logs = new List<HistoryLog>();
+{
+    var logs = new List<HistoryLog>();
 
-            using (var connection = new OracleConnection(_connectionString))
+    using (var connection = new OracleConnection(_connectionString))
+    {
+        connection.Open();
+        var query = "SELECT ID_LOG, TABLE_NAME, OPERATION_TYPE, TIMESTAMP FROM HISTORY_LOG";
+        using (var command = new OracleCommand(query, connection))
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read())
             {
-                connection.Open();
-                var query = "SELECT ID_LOG, TABLE_NAME, OPERATION_TYPE, TIMESTAMP FROM HISTORY_LOG";
-                using (var command = new OracleCommand(query, connection))
-                using (var reader = command.ExecuteReader())
+                logs.Add(new HistoryLog
                 {
-                    while (reader.Read())
+                    IdLog = reader.GetInt32(reader.GetOrdinal("ID_LOG")),
+                    TableName = reader.GetString(reader.GetOrdinal("TABLE_NAME")),
+                    OperationType = reader.GetString(reader.GetOrdinal("OPERATION_TYPE")),
+                    Timestamp = reader.GetDateTime(reader.GetOrdinal("TIMESTAMP"))
+                });
+            }
+        }
+    }
+    return logs;
+}
+
+// Kursor
+
+public List<NonDisplayedItemViewModel> GetNonDisplayedItems()
+{
+    var items = new List<NonDisplayedItemViewModel>();
+
+    using (var connection = new OracleConnection(_connectionString))
+    {
+        connection.Open();
+
+        using (var command = new OracleCommand("LOGNONDISPLAYEDITEMS", connection))
+        {
+            command.CommandType = CommandType.StoredProcedure;
+
+            // Výstupní parametr pro kurzor
+            var cursorParam = new OracleParameter
+            {
+                ParameterName = "p_cursor",
+                OracleDbType = OracleDbType.RefCursor,
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(cursorParam);
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    items.Add(new NonDisplayedItemViewModel
                     {
-                        logs.Add(new HistoryLog
-                        {
-                            IdLog = reader.GetInt32(reader.GetOrdinal("ID_LOG")),
-                            TableName = reader.GetString(reader.GetOrdinal("TABLE_NAME")),
-                            OperationType = reader.GetString(reader.GetOrdinal("OPERATION_TYPE")),
-                            Timestamp = reader.GetDateTime(reader.GetOrdinal("TIMESTAMP"))
-                        });
-                    }
+                        IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET")),
+                        Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
+                        Stav = reader.GetString(reader.GetOrdinal("STAV"))
+                    });
                 }
             }
-            return logs;
         }
+    }
+    return items;
+}
 
-        // Kursor
 
-        public List<NonDisplayedItemViewModel> GetNonDisplayedItems()
+
+//podmínka bezpečnosti země -funkce
+public string CheckSafetyForBorrow(int idMuzeum)
+{
+    using (var connection = new OracleConnection(_connectionString))
+    {
+        connection.Open();
+
+        using (var command = new OracleCommand("SELECT CheckSafetyForBorrow(:p_id_muzeum) FROM DUAL", connection))
         {
-            var items = new List<NonDisplayedItemViewModel>();
+            command.CommandType = CommandType.Text;
 
-            using (var connection = new OracleConnection(_connectionString))
-            {
-                connection.Open();
+            // Parametr pro vstupní ID muzea
+            command.Parameters.Add(new OracleParameter("p_id_muzeum", OracleDbType.Int32)).Value = idMuzeum;
 
-                using (var command = new OracleCommand("LOGNONDISPLAYEDITEMS", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
+            // Spustíme dotaz
+            var result = command.ExecuteScalar();
 
-                    // Výstupní parametr pro kurzor
-                    var cursorParam = new OracleParameter
-                    {
-                        ParameterName = "p_cursor",
-                        OracleDbType = OracleDbType.RefCursor,
-                        Direction = ParameterDirection.Output
-                    };
-                    command.Parameters.Add(cursorParam);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            items.Add(new NonDisplayedItemViewModel
-                            {
-                                IdPredmet = reader.GetInt32(reader.GetOrdinal("ID_PREDMET")),
-                                Nazev = reader.GetString(reader.GetOrdinal("NAZEV")),
-                                Stav = reader.GetString(reader.GetOrdinal("STAV"))
-                            });
-                        }
-                    }
-                }
-            }
-            return items;
+            return result?.ToString() ?? "Neznámý stav";
         }
+    }
+}
 
+//funkce na oveření vlaidity emailu fce
 
+public bool IsEmailValid(string email)
+{
+    using (var connection = new OracleConnection(_connectionString))
+    {
+        Console.WriteLine($"Email k validaci: {email}");
+        connection.Open();
 
-
-
-
-
-        public void TestConnection()
+        // Použití jednoduchého SQL dotazu
+        using (var command = new OracleCommand("SELECT IS_VALID_EMAIL(:email) FROM DUAL", connection))
         {
+            // Přidání parametru
+            command.Parameters.Add(new OracleParameter("email", OracleDbType.Varchar2)).Value = email;
+
             try
             {
-                using (OracleConnection conn = new OracleConnection(_connectionString))
-                {
-                    conn.Open();
-                    Console.WriteLine("Připojení k databázi bylo úspěšné.");
+                // Získání výsledku
+                var result = command.ExecuteScalar();
 
-                    // Jednoduchý dotaz pro zobrazení dat z tabulky PREDMET
-                    using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
-                    {
-                        using (OracleDataReader reader = cmd.ExecuteReader())
-                        {
-                            Console.WriteLine("Data z tabulky PREDMET:");
-                            while (reader.Read())
-                            {
-                                // Zobrazení dat - můžeme zobrazit Id a Název předmětu
-                                Console.WriteLine($"ID: {reader["IdPredmet"]}, Název: {reader["Nazev"]}");
-                            }
-                        }
-                    }
+                // Ověření, zda výsledek není null nebo DBNull
+                if (result == null || result == DBNull.Value)
+                {
+                    Console.WriteLine("Funkce vrátila NULL.");
+                    return false;
                 }
+
+                // Převod na číslo a návrat výsledku
+                int isValid = Convert.ToInt32(result);
+                Console.WriteLine($"Výsledek validace: {isValid}");
+                return isValid == 1;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Chyba při připojení k databázi " + ex.Message);
+                // Zalogování chyby
+                Console.WriteLine($"Chyba při validaci e-mailu: {ex.Message}");
+                return false;
             }
         }
+    }
+}
+
+
+
+
+
+
+public void TestConnection()
+{
+    try
+    {
+        using (OracleConnection conn = new OracleConnection(_connectionString))
+        {
+            conn.Open();
+            Console.WriteLine("Připojení k databázi bylo úspěšné.");
+
+            // Jednoduchý dotaz pro zobrazení dat z tabulky PREDMET
+            using (OracleCommand cmd = new OracleCommand("SELECT IdPredmet, Nazev FROM PREDMET", conn))
+            {
+                using (OracleDataReader reader = cmd.ExecuteReader())
+                {
+                    Console.WriteLine("Data z tabulky PREDMET:");
+                    while (reader.Read())
+                    {
+                        // Zobrazení dat - můžeme zobrazit Id a Název předmětu
+                        Console.WriteLine($"ID: {reader["IdPredmet"]}, Název: {reader["Nazev"]}");
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Chyba při připojení k databázi " + ex.Message);
+    }
+}
     }
 }

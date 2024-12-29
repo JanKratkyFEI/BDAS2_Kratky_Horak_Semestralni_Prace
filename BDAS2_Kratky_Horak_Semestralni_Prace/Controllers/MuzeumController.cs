@@ -75,6 +75,15 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace.Controllers
             _connectionString.DeleteMuzeum(id);
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public ContentResult CheckSafety(int idMuzeum)
+        {
+            var safetyStatus = _connectionString.CheckSafetyForBorrow(idMuzeum); // Zavolá funkci v DB
+            System.Diagnostics.Debug.WriteLine($"Bezpečnost: {safetyStatus}"); // Logování pro kontrolu
+            return Content(safetyStatus);
+        }
+
     }
 
 }

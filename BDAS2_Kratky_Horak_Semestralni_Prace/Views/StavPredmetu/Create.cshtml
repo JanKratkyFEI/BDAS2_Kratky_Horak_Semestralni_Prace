@@ -3,6 +3,9 @@
 <div class="container mt-4">
     <h2>Vytvořit nový stav</h2>
 
+   
+    }
+
     <form method="post" asp-action="Create">
         <div class="form-group">
             <label for="Stav">Stav</label>
@@ -25,10 +28,7 @@
         <button type="submit" class="btn btn-primary">Uložit</button>
         <a asp-action="Index" class="btn btn-secondary">Zpět</a>
     </form>
+
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+

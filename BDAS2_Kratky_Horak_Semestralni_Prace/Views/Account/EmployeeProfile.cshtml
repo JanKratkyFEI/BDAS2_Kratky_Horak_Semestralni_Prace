@@ -1,6 +1,7 @@
 ﻿@model BDAS2_Kratky_Horak_Semestralni_Prace.Models.Zamestnanec
 @inject IHttpContextAccessor HttpContextAccessor
 
+<div class="scrollable">
 <div class="container mt-4" style="max-height: 80vh; overflow-y: auto;">
     <h2>Profil zaměstnance</h2>
     <div class="row">
@@ -27,14 +28,17 @@
         </div>
     </div>
 </div>
+</div>
 
 <div class="mt-4">
     <a asp-action="Search" class="btn btn-secondary">Zpět na vyhledávání</a>
 
     <!-- nastavení pracomocí (role) může jenom admin-->
-    @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Admin")
+    @if (ViewData["EmulatedRole"]?.ToString() == "Admin")
+   
     {
         <a asp-action="EditEmployee" asp-route-id="@Model.IdZamestnanec" class="btn btn-primary">Upravit</a>
+        <a asp-action="Delete" asp-route-id="@Model.IdZamestnanec" class="btn btn-primary">Smazat Uživatele</a>
     }
 </div>
 

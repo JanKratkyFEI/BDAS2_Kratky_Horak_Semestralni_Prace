@@ -1,4 +1,5 @@
 using BDAS2_Kratky_Horak_Semestralni_Prace.Models;
+using System.Globalization;
 
 namespace BDAS2_Kratky_Horak_Semestralni_Prace
 {
@@ -7,6 +8,12 @@ namespace BDAS2_Kratky_Horak_Semestralni_Prace
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            //nastavení kultury aplikace
+            var cultureInfo = new CultureInfo("cs-CZ");
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

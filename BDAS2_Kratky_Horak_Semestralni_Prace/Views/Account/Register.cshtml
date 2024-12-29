@@ -16,7 +16,8 @@
     </div>
     <div class="form-group">
         <label>Email:</label>
-        <input type="email" asp-for="Email" class="form-control" required /> <!-- Přidáno pole pro email -->
+        <input type="email" asp-for="Email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label>Uživatelské Jméno:</label>
